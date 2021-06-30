@@ -43,12 +43,12 @@ public class WildcardMatcher {
 
     private static final int NOT_FOUND = -1;
 
-    /**
-     * returns true if at least one candidate match at least one pattern (case sensitive)
-     * @param pattern
-     * @param candidate
-     * @return
-     */
+//    /**
+//     * returns true if at least one candidate match at least one pattern (case sensitive)
+//     * @param pattern
+//     * @param candidate
+//     * @return
+//     */
     public static boolean matchAny(final String[] pattern, final String[] candidate) {
 
         return matchAny(pattern, candidate, false);
@@ -59,14 +59,14 @@ public class WildcardMatcher {
         return matchAny(pattern, candidate, false);
     }
 
-    /**
-     * returns true if at least one candidate match at least one pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @param ignoreCase
-     * @return
-     */
+//    /**
+//     * returns true if at least one candidate match at least one pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @param ignoreCase
+//     * @return
+//     */
     public static boolean matchAny(final String[] pattern, final String[] candidate, boolean ignoreCase) {
 
         for (int i = 0; i < pattern.length; i++) {
@@ -79,14 +79,14 @@ public class WildcardMatcher {
         return false;
     }
 
-    /**
-     * returns true if at least one candidate match at least one pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @param ignoreCase
-     * @return
-     */
+//    /**
+//     * returns true if at least one candidate match at least one pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @param ignoreCase
+//     * @return
+//     */
     public static boolean matchAny(final Collection<String> pattern, final String[] candidate, boolean ignoreCase) {
 
         for (String string: pattern) {
@@ -109,13 +109,13 @@ public class WildcardMatcher {
         return false;
     }
 
-    /**
-     * return true if all candidates find a matching pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @return
-     */
+//    /**
+//     * return true if all candidates find a matching pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @return
+//     */
     public static boolean matchAll(final String[] pattern, final String[] candidate) {
 
 
@@ -129,12 +129,12 @@ public class WildcardMatcher {
         return true;
     }
 
-    /**
-     *
-     * @param pattern
-     * @param candidate
-     * @return
-     */
+//    /**
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @return
+//     */
     public static boolean allPatternsMatched(final String[] pattern, final String[] candidate) {
 
         int matchedPatternNum = 0;
@@ -170,14 +170,14 @@ public class WildcardMatcher {
         return matchAny(pattern, candidate, false);
     }
 
-    /**
-     * return true if at least one candidate matches the given pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @param ignoreCase
-     * @return
-     */
+//    /**
+//     * return true if at least one candidate matches the given pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @param ignoreCase
+//     * @return
+//     */
     public static boolean matchAny(final String pattern, final String[] candidate, boolean ignoreCase) {
 
         for (int i = 0; i < candidate.length; i++) {
@@ -320,13 +320,13 @@ public class WildcardMatcher {
     }
 
 
-    /**
-     * returns true if the candidate matches at least one pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @return
-     */
+//    /**
+//     * returns true if the candidate matches at least one pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @return
+//     */
     public static boolean matchAny(final String pattern[], final String candidate) {
 
         for (int i = 0; i < pattern.length; i++) {
@@ -339,13 +339,13 @@ public class WildcardMatcher {
         return false;
     }
 
-    /**
-     * returns true if the candidate matches at least one pattern
-     *
-     * @param pattern
-     * @param candidate
-     * @return
-     */
+//    /**
+//     * returns true if the candidate matches at least one pattern
+//     *
+//     * @param pattern
+//     * @param candidate
+//     * @return
+//     */
     public static boolean matchAny(final Collection<String> pattern, final String candidate) {
 
         for (String string: pattern) {
@@ -394,12 +394,12 @@ public class WildcardMatcher {
         return false;
     }
 
-    /**
-     *
-     * @param set will be modified
-     * @param stringContainingWc
-     * @return
-     */
+//    /**
+//     *
+//     * @param set will be modified
+//     * @param stringContainingWc
+//     * @return
+//     */
     public static boolean wildcardRemoveFromSet(Set<String> set, String stringContainingWc) {
         if(set == null || set.isEmpty()) {
             return false;
@@ -419,12 +419,12 @@ public class WildcardMatcher {
         }
     }
 
-    /**
-     *
-     * @param set will be modified
-     * @param stringContainingWc
-     * @return
-     */
+//    /**
+//     *
+//     * @param set will be modified
+////     * @param stringContainingWc
+//     * @return
+//     */
     public static boolean wildcardRetainInSet(Set<String> set, String[] setContainingWc) {
         if(set == null || set.isEmpty()) {
             return false;
@@ -461,19 +461,19 @@ public class WildcardMatcher {
      */
 
 
-    /**
-     * Checks a filename to see if it matches the specified wildcard matcher
-     * allowing control over case-sensitivity.
-     * <p>
-     * The wildcard matcher uses the characters '?' and '*' to represent a
-     * single or multiple (zero or more) wildcard characters.
-     * N.B. the sequence "*?" does not work properly at present in match strings.
-     *
-     * @param candidate  the filename to match on
-     * @param pattern  the wildcard string to match against
-     * @return true if the filename matches the wilcard string
-     * @since 1.3
-     */
+//    /**
+//     * Checks a filename to see if it matches the specified wildcard matcher
+//     * allowing control over case-sensitivity.
+//     * <p>
+//     * The wildcard matcher uses the characters '?' and '*' to represent a
+//     * single or multiple (zero or more) wildcard characters.
+//     * N.B. the sequence "*?" does not work properly at present in match strings.
+//     *
+//     * @param candidate  the filename to match on
+//     * @param pattern  the wildcard string to match against
+//     * @return true if the filename matches the wilcard string
+//     * @since 1.3
+//     */
     private static boolean simpleWildcardMatch(final String pattern, final String candidate) {
         if (candidate == null && pattern == null) {
             return true;
@@ -554,14 +554,14 @@ public class WildcardMatcher {
         return false;
     }
 
-    /**
-     * Splits a string into a number of tokens.
-     * The text is split by '?' and '*'.
-     * Where multiple '*' occur consecutively they are collapsed into a single '*'.
-     *
-     * @param text  the text to split
-     * @return the array of tokens, never null
-     */
+//    /**
+//     * Splits a string into a number of tokens.
+//     * The text is split by '?' and '*'.
+//     * Where multiple '*' occur consecutively they are collapsed into a single '*'.
+//     *
+//     * @param text  the text to split
+//     * @return the array of tokens, never null
+//     */
     private static String[] splitOnTokens(final String text) {
         // used by wildcardMatch
         // package level so a unit test may run on this
@@ -597,21 +597,21 @@ public class WildcardMatcher {
         return list.toArray( new String[ list.size() ] );
     }
 
-    /**
-     * Checks if one string contains another starting at a specific index using the
-     * case-sensitivity rule.
-     * <p>
-     * This method mimics parts of {@link String#indexOf(String, int)}
-     * but takes case-sensitivity into account.
-     *
-     * @param str  the string to check, not null
-     * @param strStartIndex  the index to start at in str
-     * @param search  the start to search for, not null
-     * @return the first index of the search String,
-     *  -1 if no match or {@code null} string input
-     * @throws NullPointerException if either string is null
-     * @since 2.0
-     */
+//    /**
+//     * Checks if one string contains another starting at a specific index using the
+//     * case-sensitivity rule.
+//     * <p>
+//     * This method mimics parts of {@link String#indexOf(String, int)}
+//     * but takes case-sensitivity into account.
+//     *
+//     * @param str  the string to check, not null
+//     * @param strStartIndex  the index to start at in str
+//     * @param search  the start to search for, not null
+//     * @return the first index of the search String,
+//     *  -1 if no match or {@code null} string input
+//     * @throws NullPointerException if either string is null
+//     * @since 2.0
+//     */
     private static int checkIndexOf(final String str, final int strStartIndex, final String search) {
         final int endIndex = str.length() - search.length();
         if (endIndex >= strStartIndex) {
@@ -624,18 +624,18 @@ public class WildcardMatcher {
         return -1;
     }
 
-    /**
-     * Checks if one string contains another at a specific index using the case-sensitivity rule.
-     * <p>
-     * This method mimics parts of {@link String#regionMatches(boolean, int, String, int, int)}
-     * but takes case-sensitivity into account.
-     *
-     * @param str  the string to check, not null
-     * @param strStartIndex  the index to start at in str
-     * @param search  the start to search for, not null
-     * @return true if equal using the case rules
-     * @throws NullPointerException if either string is null
-     */
+//    /**
+//     * Checks if one string contains another at a specific index using the case-sensitivity rule.
+//     * <p>
+//     * This method mimics parts of {@link String#regionMatches(boolean, int, String, int, int)}
+//     * but takes case-sensitivity into account.
+//     *
+//     * @param str  the string to check, not null
+//     * @param strStartIndex  the index to start at in str
+//     * @param search  the start to search for, not null
+//     * @return true if equal using the case rules
+//     * @throws NullPointerException if either string is null
+//     */
     private static boolean checkRegionMatches(final String str, final int strStartIndex, final String search) {
         return str.regionMatches(false, strStartIndex, search, 0, search.length());
     }

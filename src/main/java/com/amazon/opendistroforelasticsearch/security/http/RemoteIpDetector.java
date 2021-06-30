@@ -53,12 +53,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.util.concurrent.ThreadContext;
 import org.elasticsearch.http.netty4.Netty4HttpRequest;
-
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
 
 class RemoteIpDetector {
 
@@ -124,9 +123,9 @@ class RemoteIpDetector {
      */
     private String remoteIpHeader = "X-Forwarded-For";
 
-    /**
-     * @see RemoteIpValve#setTrustedProxies(String)
-     */
+//    /**
+//     * @see RemoteIpValve#setTrustedProxies(String)
+//     */
     private Pattern trustedProxies = null;
 
     /**
@@ -246,11 +245,11 @@ class RemoteIpDetector {
                     request.request().headers().set(remoteIpHeader,commaDelimitedRemoteIpHeaderValue);
                 }
                 
-                if (log.isTraceEnabled()) {
-                    final String originalRemoteHost = ((InetSocketAddress)request.getRemoteAddress()).getAddress().getHostName();
-                    log.trace("Incoming request " + request.request().uri() + " with originalRemoteAddr '" + originalRemoteAddr
-                              + "', originalRemoteHost='" + originalRemoteHost + "', will be seen as newRemoteAddr='" + remoteIp);
-                }
+//                if (log.isTraceEnabled()) {
+//                    final String originalRemoteHost = ((InetSocketAddress)request.getRemoteAddress()).getAddress().getHostName();
+//                    log.trace("Incoming request " + request.request().uri() + " with originalRemoteAddr '" + originalRemoteAddr
+//                              + "', originalRemoteHost='" + originalRemoteHost + "', will be seen as newRemoteAddr='" + remoteIp);
+//                }
                 
                 //TODO check put in thread context
                 threadContext.putTransient(ConfigConstants.OPENDISTRO_SECURITY_XFF_DONE, Boolean.TRUE);
@@ -262,10 +261,10 @@ class RemoteIpDetector {
             }
             
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Skip RemoteIpDetector for request " + request.request().uri() + " with originalRemoteAddr '"
-                        + request.getRemoteAddress() + "' cause no internal proxy matches");
-            }
+//            if (log.isTraceEnabled()) {
+//                log.trace("Skip RemoteIpDetector for request " + request.request().uri() + " with originalRemoteAddr '"
+//                        + request.getRemoteAddress() + "' cause no internal proxy matches");
+//            }
         }
         
         return originalRemoteAddr;
@@ -307,19 +306,19 @@ class RemoteIpDetector {
         this.proxiesHeader = proxiesHeader;
     }
 
-    /**
-     * <p>
-     * Name of the http header from which the remote ip is extracted.
-     * </p>
-     * <p>
-     * The value of this header can be comma delimited.
-     * </p>
-     * <p>
-     * Default value : <code>X-Forwarded-For</code>
-     * </p>
-     *
-     * @param remoteIpHeader
-     */
+//    /**
+//     * <p>
+//     * Name of the http header from which the remote ip is extracted.
+//     * </p>
+//     * <p>
+//     * The value of this header can be comma delimited.
+//     * </p>
+//     * <p>
+//     * Default value : <code>X-Forwarded-For</code>
+//     * </p>
+//     *
+//     * @param remoteIpHeader
+//     */
     public void setRemoteIpHeader(String remoteIpHeader) {
         this.remoteIpHeader = remoteIpHeader;
     }

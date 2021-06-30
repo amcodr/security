@@ -1,4 +1,0 @@
-opendistro_security_all_access:
-  users:
-    - admin
-    - "cn=Michael Jackson,ou=people,o=TEST"

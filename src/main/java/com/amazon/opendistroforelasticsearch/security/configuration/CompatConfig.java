@@ -30,12 +30,11 @@
 
 package com.amazon.opendistroforelasticsearch.security.configuration;
 
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
-
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
 
 
 public class CompatConfig implements ConfigurationChangeListener {

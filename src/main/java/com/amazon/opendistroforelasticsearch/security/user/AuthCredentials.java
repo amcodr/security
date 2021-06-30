@@ -208,14 +208,14 @@ public final class AuthCredentials {
         return complete;
     }
 
-    /**
-     * If the credentials are complete and no further roundtrips with the originator are due
-     * then this method <b>must</b> be called so that the authentication flow can proceed.
-     * <p/>
-     * If this credentials are already marked a complete then a call to this method does nothing.
-     *
-     * @return this
-     */
+//    /**
+//     * If the credentials are complete and no further roundtrips with the originator are due
+//     * then this method <b>must</b> be called so that the authentication flow can proceed.
+//     * <p/>
+//     * If this credentials are already marked a complete then a call to this method does nothing.
+//     *
+//     * @return this
+//     */
     public AuthCredentials markComplete() {
         this.complete = true;
         return this;

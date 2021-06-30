@@ -35,7 +35,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.Version;
 import org.elasticsearch.cluster.ClusterChangedEvent;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.ClusterStateListener;
@@ -110,16 +109,21 @@ public class ClusterInfoHolder implements ClusterStateListener {
     }
 
     private static boolean clusterHas5xNodes(ClusterState state) {
-        return state.nodes().getMinNodeVersion().before(Version.V_6_0_0_alpha1);
+//        return state.nodes().getMinNodeVersion().before(Version.V_6_0_0_alpha1);
+
+//        support is added for the ES 5.4 hence returning true
+        return true;
     }
     
     private static boolean clusterHas5xIndices(ClusterState state) {
         final Iterator<IndexMetaData> indices = state.metaData().indices().valuesIt();
         for(;indices.hasNext();) {
             final IndexMetaData indexMetaData = indices.next();
-            if(indexMetaData.getCreationVersion().before(Version.V_6_0_0_alpha1)) {
-                return true;
-            }
+//            if(indexMetaData.getCreationVersion().before(Version.V_6_0_0_alpha1)) {
+//                return true;
+//            }
+            //        support is added for the ES 5.4 hence returning true
+            return true;
         }
         return false;
     }

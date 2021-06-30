@@ -20,13 +20,12 @@ package com.amazon.opendistroforelasticsearch.security.auth.limiting;
 import java.net.InetAddress;
 import java.nio.file.Path;
 
-import org.elasticsearch.common.settings.Settings;
-
 import com.amazon.opendistroforelasticsearch.security.auth.AuthFailureListener;
 import com.amazon.opendistroforelasticsearch.security.auth.blocking.ClientBlockRegistry;
 import com.amazon.opendistroforelasticsearch.security.auth.blocking.HeapBasedClientBlockRegistry;
 import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import com.amazon.opendistroforelasticsearch.security.util.ratetracking.RateTracker;
+import org.elasticsearch.common.settings.Settings;
 
 public abstract class AbstractRateLimiter<ClientIdType> implements AuthFailureListener, ClientBlockRegistry<ClientIdType> {
     protected final ClientBlockRegistry<ClientIdType> clientBlockRegistry;

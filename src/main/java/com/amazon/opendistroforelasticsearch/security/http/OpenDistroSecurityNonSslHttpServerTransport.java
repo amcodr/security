@@ -56,7 +56,7 @@ public class OpenDistroSecurityNonSslHttpServerTransport extends Netty4HttpServe
         return new NonSslHttpChannelHandler(this);
     }
 
-    protected class NonSslHttpChannelHandler extends Netty4HttpServerTransport.HttpChannelHandler {
+    protected class NonSslHttpChannelHandler extends HttpChannelHandler {
         
         protected NonSslHttpChannelHandler(Netty4HttpServerTransport transport) {
             super(transport, OpenDistroSecurityNonSslHttpServerTransport.this.detailedErrorsEnabled, OpenDistroSecurityNonSslHttpServerTransport.this.threadContext);

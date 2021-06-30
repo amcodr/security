@@ -1,68 +1,143 @@
-// Uses Gradle to build RPMs since that's what we use for the other plugins. When all you have is a hammer...
-plugins {
-   id "nebula.ospackage" version "5.3.0"
-}
+// reWritting the build script and commenting out the original gradle script as it was only making deb and rpm package
+// using gradle as it is easy to maintain dependency in gradle.
 
-// To prevent conflicts with maven build under build/
-buildDir = 'gradle-build'
-
-ext {
-    opendistroVersion = '0.10.1'
-    isSnapshot = "true" == System.getProperty("build.snapshot", "true")
-}
-
-group = "com.amazon.opendistroforelasticsearch"
-// Increment the final digit when there's a new plugin versions for the same opendistro version
-// Reset the final digit to 0 when upgrading to a new opendistro version
-version = "${opendistroVersion}.1" + (isSnapshot ? "-SNAPSHOT" : "")
-
-
-if (!project.hasProperty("archivePath")) {
-    throw new GradleException("Missing -ParchivePath command line switch pointing to built plugin ZIP")
-}
-if (!project.file(archivePath).exists()) {
-    throw new GradleException("Missing plugin zip file: $archivePath")
-}
-
-ospackage {
-    packageName = "opendistro-security"
-    release = isSnapshot ? "0.0" : '0'
-    version = "${project.version}" - "-SNAPSHOT"
-
-    into '/usr/share/elasticsearch/plugins'
-    from(zipTree(project.file(archivePath).absolutePath)) {
-        into "opendistro_security"
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
     }
-
-    user 'root'
-    permissionGroup 'root'
-    fileMode 0644
-    dirMode 0755
-
-    requires('elasticsearch-oss', "6.8.6", EQUAL)
-    packager = 'Amazon'
-    vendor = 'Amazon'
-    os = 'LINUX'
-    prefix '/usr'
-
-    license 'ASL-2.0'
-    maintainer 'OpenDistro for Elasticsearch Team <opendistro@amazon.com>'
-    url 'https://opendistro.github.io/elasticsearch/downloads'
-    summary '''
-     Security plugin for OpenDistro for Elasticsearch. 
-     Reference documentation can be found at https://opendistro.github.io/elasticsearch/docs.
-     '''.stripIndent().replace('\n', ' ').trim()
-
-    //TODO: Would be better if the install_demo_configuration.sh script is marked executable in the upstream plugin instead of running bash manually here
-    postInstall "exec /bin/bash /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s"
+    dependencies {
+        classpath "org.elasticsearch.gradle:build-tools:5.4.3"
+    }
 }
 
-buildRpm {
-    arch = 'NOARCH'
-    archiveName "${packageName}-${version}.rpm"
+plugins {
+    id 'java'
 }
 
-buildDeb {
-    arch = 'amd64'
-    archiveName "${packageName}-${version}.deb"
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
 }
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+apply plugin: 'elasticsearch.esplugin'
+
+esplugin {
+    name 'opendistro_security'
+    description "Implements Basic Authentication plugin for elasticsearch"
+    classname 'com.amazon.opendistroforelasticsearch.security.OpenDistroSecurityPlugin'
+}
+
+dependencies {
+    compile 'com.google.guava:guava:25.1-jre'
+
+//    compile group: 'io.netty', name: 'netty-all', version: '4.0.53.Final'
+    compile group: 'org.elasticsearch.plugin', name: 'transport-netty4-client', version: '5.4.3'
+
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
+
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+}
+
+// removing the Werror tag
+allprojects {
+    repositories {
+        jcenter()
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs.remove("-Werror")
+        }
+    }
+}
+
+
+
+
+
+
+//// Uses Gradle to build RPMs since that's what we use for the other plugins. When all you have is a hammer...
+//plugins {
+//   id "nebula.ospackage" version "5.3.0"
+//}
+//
+//// To prevent conflicts with maven build under build/
+//buildDir = 'gradle-build'
+//
+//ext {
+//    opendistroVersion = '0.10.1'
+//    isSnapshot = "true" == System.getProperty("build.snapshot", "true")
+//}
+//
+//group = "com.amazon.opendistroforelasticsearch"
+//// Increment the final digit when there's a new plugin versions for the same opendistro version
+//// Reset the final digit to 0 when upgrading to a new opendistro version
+//version = "${opendistroVersion}.1" + (isSnapshot ? "-SNAPSHOT" : "")
+//
+//
+//if (!project.hasProperty("archivePath")) {
+//    throw new GradleException("Missing -ParchivePath command line switch pointing to built plugin ZIP")
+//}
+//if (!project.file(archivePath).exists()) {
+//    throw new GradleException("Missing plugin zip file: $archivePath")
+//}
+//
+//ospackage {
+//    packageName = "opendistro-security"
+//    release = isSnapshot ? "0.0" : '0'
+//    version = "${project.version}" - "-SNAPSHOT"
+//
+//    into '/usr/share/elasticsearch/plugins'
+//    from(zipTree(project.file(archivePath).absolutePath)) {
+//        into "opendistro_security"
+//    }
+//
+//    user 'root'
+//    permissionGroup 'root'
+//    fileMode 0644
+//    dirMode 0755
+//
+//    requires('elasticsearch-oss', "6.8.6", EQUAL)
+//    packager = 'Amazon'
+//    vendor = 'Amazon'
+//    os = 'LINUX'
+//    prefix '/usr'
+//
+//    license 'ASL-2.0'
+//    maintainer 'OpenDistro for Elasticsearch Team <opendistro@amazon.com>'
+//    url 'https://opendistro.github.io/elasticsearch/downloads'
+//    summary '''
+//     Security plugin for OpenDistro for Elasticsearch.
+//     Reference documentation can be found at https://opendistro.github.io/elasticsearch/docs.
+//     '''.stripIndent().replace('\n', ' ').trim()
+//
+//    //TODO: Would be better if the install_demo_configuration.sh script is marked executable in the upstream plugin instead of running bash manually here
+//    postInstall "exec /bin/bash /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s"
+//}
+//
+//buildRpm {
+//    arch = 'NOARCH'
+//    archiveName "${packageName}-${version}.rpm"
+//}
+//
+//buildDeb {
+//    arch = 'amd64'
+//    archiveName "${packageName}-${version}.deb"
+//}
+
+//sourceSets {
+//    main {
+//        resources {
+//            srcDirs "tools", "Securityconfig"
+//        }
+//    }
+//}

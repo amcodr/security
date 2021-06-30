@@ -30,15 +30,9 @@
 
 package com.amazon.opendistroforelasticsearch.security.configuration;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+//import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+//import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityDeprecationHandler;
+//import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ExceptionsHelper;
@@ -56,11 +50,18 @@ import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.XContentType;
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
 import org.elasticsearch.threadpool.ThreadPool;
 
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityDeprecationHandler;
-import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class LegacyConfigurationLoader {
 
@@ -68,7 +69,7 @@ class LegacyConfigurationLoader {
     private final Client client;
     private final Settings settings;
     private final String opendistrosecurityIndex;
-    
+
     LegacyConfigurationLoader(final Client client, ThreadPool threadPool, final Settings settings) {
         super();
         this.client = client;
@@ -80,62 +81,62 @@ class LegacyConfigurationLoader {
     Map<String, Tuple<Long, Settings>> loadLegacy(final String[] events, long timeout, TimeUnit timeUnit) throws InterruptedException, TimeoutException {
         final CountDownLatch latch = new CountDownLatch(events.length);
         final Map<String, Tuple<Long, Settings>> rs = new HashMap<String, Tuple<Long, Settings>>(events.length);
-        
+
         loadAsyncLegacy(events, new ConfigCallback() {
-            
+
             @Override
             public void success(String type, Tuple<Long, Settings> settings) {
                 if(latch.getCount() <= 0) {
                     log.error("Latch already counted down (for {} of {})  (index={})", type, Arrays.toString(events), opendistrosecurityIndex);
                 }
-                
+
                 rs.put(type, settings);
                 latch.countDown();
                 if(log.isDebugEnabled()) {
                     log.debug("Received config for {} (of {}) with current latch value={}", type, Arrays.toString(events), latch.getCount());
                 }
             }
-            
+
             @Override
             public void singleFailure(Failure failure) {
                 log.error("Failure {} retrieving configuration for {} (index={})", failure==null?null:failure.getMessage(), Arrays.toString(events), opendistrosecurityIndex);
             }
-            
+
             @Override
             public void noData(String type) {
                 log.warn("No data for {} while retrieving configuration for {}  (index={})", type, Arrays.toString(events), opendistrosecurityIndex);
             }
-            
+
             @Override
             public void failure(Throwable t) {
                 log.error("Exception {} while retrieving configuration for {}  (index={})",t,t.toString(), Arrays.toString(events), opendistrosecurityIndex);
             }
         });
-        
+
         if(!latch.await(timeout, timeUnit)) {
             //timeout
             throw new TimeoutException("Timeout after "+timeout+" "+timeUnit+" while retrieving configuration for "+Arrays.toString(events)+ "(index="+opendistrosecurityIndex+")");
         }
-        
+
         return rs;
     }
-    
-    void loadAsyncLegacy(final String[] events, final ConfigCallback callback) {        
+
+    void loadAsyncLegacy(final String[] events, final ConfigCallback callback) {
         if(events == null || events.length == 0) {
             log.warn("No config events requested to load");
             return;
         }
-        
+
         final MultiGetRequest mget = new MultiGetRequest();
 
         for (int i = 0; i < events.length; i++) {
             final String event = events[i];
             mget.add(opendistrosecurityIndex, event, "0");
         }
-        
+
         mget.refresh(true);
         mget.realtime(true);
-        
+
         //try(StoredContext ctx = threadContext.stashContext()) {
           //  threadContext.putHeader(ConfigConstants.OPENDISTRO_SECURITY_CONF_REQUEST_HEADER, "true");
             {
@@ -164,8 +165,8 @@ class LegacyConfigurationLoader {
                             callback.singleFailure(singleResponse==null?null:singleResponse.getFailure());
                         }
                     }
-                }           
-                
+                }
+
                 @Override
                 public void onFailure(Exception e) {
                     callback.failure(e);
@@ -182,19 +183,22 @@ class LegacyConfigurationLoader {
             log.error("Empty or null byte reference for {}", type);
             return null;
         }
-        
+
         XContentParser parser = null;
 
         try {
-            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, OpenDistroSecurityDeprecationHandler.INSTANCE, ref, XContentType.JSON);
+//            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, OpenDistroSecurityDeprecationHandler.INSTANCE, ref, XContentType.JSON);
+
+            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY,ref,XContentType.JSON);
+
             parser.nextToken();
             parser.nextToken();
-         
+
             if(!type.equals((parser.currentName()))) {
                 log.error("Cannot parse config for type {} because {}!={}", type, type, parser.currentName());
                 return null;
             }
-            
+
             parser.nextToken();
 
             final byte[] content = parser.binaryValue();
@@ -204,11 +208,11 @@ class LegacyConfigurationLoader {
             throw ExceptionsHelper.convertToElastic(e);
         } finally {
             if(parser != null) {
-                try {
+//                try {
                     parser.close();
-                } catch (IOException e) {
-                    //ignore
-                }
+//                } catch (IOException e) {
+//                    //ignore
+//                }
             }
         }
     }

@@ -30,26 +30,11 @@
 
 package com.amazon.opendistroforelasticsearch.security.configuration;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.security.Security;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceConfig;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
@@ -71,17 +56,21 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.util.concurrent.ThreadContext;
 import org.elasticsearch.common.util.concurrent.ThreadContext.StoredContext;
 import org.elasticsearch.env.Environment;
-import org.elasticsearch.threadpool.ThreadPool;
-
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
-import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceConfig;
-import com.amazon.opendistroforelasticsearch.security.ssl.util.ExceptionUtils;
 import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
 import com.amazon.opendistroforelasticsearch.security.support.ConfigHelper;
-import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import org.elasticsearch.threadpool.ThreadPool;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class IndexBaseConfigurationRepository implements ConfigurationRepository {
     private static final Logger LOGGER = LogManager.getLogger(IndexBaseConfigurationRepository.class);
@@ -100,8 +89,8 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
     private final ComplianceConfig complianceConfig;
     private ThreadPool threadPool;
 
-    private IndexBaseConfigurationRepository(Settings settings, final Path configPath, ThreadPool threadPool, 
-            Client client, ClusterService clusterService, AuditLog auditLog, ComplianceConfig complianceConfig) {
+    private IndexBaseConfigurationRepository(Settings settings, final Path configPath, ThreadPool threadPool,
+                                             Client client, ClusterService clusterService, AuditLog auditLog, ComplianceConfig complianceConfig) {
         this.opendistrosecurityIndex = settings.get(ConfigConstants.OPENDISTRO_SECURITY_CONFIG_INDEX_NAME, ConfigConstants.OPENDISTRO_SECURITY_DEFAULT_CONFIG_INDEX);
         this.settings = settings;
         this.client = client;
@@ -127,11 +116,15 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
                     public void run() {
                         try {
 
+
                             if(installDefaultConfig.get()) {
 
                                 try {
                                     String lookupDir = System.getProperty("security.default_init.dir");
-                                    final String cd = lookupDir != null? (lookupDir+"/") : new Environment(settings, configPath).pluginsFile().toAbsolutePath().toString()+"/opendistro_security/securityconfig/";
+//                                    final String cd = lookupDir != null? (lookupDir+"/") : new Environment(settings, configPath).pluginsFile().toAbsolutePath().toString()+"/opendistro_security/securityconfig/";
+
+                                    final String cd = lookupDir != null? (lookupDir+"/") : new Environment(settings).pluginsFile().toAbsolutePath().toString()+"/opendistro_security/securityconfig/";
+
                                     File confFile = new File(cd+"config.yml");
                                     if(confFile.exists()) {
                                         final ThreadContext threadContext = threadPool.getThreadContext();
@@ -146,6 +139,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
                                             boolean ok = client.admin().indices().create(new CreateIndexRequest(opendistrosecurityIndex)
                                             .settings(indexSettings))
                                             .actionGet().isAcknowledged();
+
                                             if(ok) {
                                                 ConfigHelper.uploadFile(client, cd+"config.yml", opendistrosecurityIndex, "config");
                                                 ConfigHelper.uploadFile(client, cd+"roles.yml", opendistrosecurityIndex, "roles");
@@ -193,7 +187,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
                                     reloadConfiguration(Arrays.asList(new String[] { "config", "roles", "rolesmapping", "internalusers", "actiongroups"} ));
                                     break;
                                 } catch (Exception e) {
-                                    LOGGER.debug("Unable to load configuration due to {}", String.valueOf(ExceptionUtils.getRootCause(e)));
+//                                    LOGGER.debug("Unable to load configuration due to {}", String.valueOf(ExceptionUtils.getRootCause(e)));
                                     try {
                                         Thread.sleep(3000);
                                     } catch (InterruptedException e1) {
@@ -267,7 +261,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
                     LOGGER.error("Failure while executing IndicesExistsRequest {}",e2, e2);
                     bgThread.start();
                 }
-                                
+
             }
         });
     }
@@ -344,7 +338,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
         LOGGER.debug("Subscribe on configuration changes by type {} with listener {}", configurationType, listener);
         configTypeToChancheListener.put(configurationType, listener);
     }
-    
+
     private synchronized void notifyAboutChanges(Map<String, Settings> typeToConfig) {
         for (Map.Entry<String, ConfigurationChangeListener> entry : configTypeToChancheListener.entries()) {
             String type = entry.getKey();
@@ -436,8 +430,8 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
         return conf;
     }
 
-    private static String formatDate(long date) {
-        return new SimpleDateFormat("yyyy-MM-dd", OpenDistroSecurityUtils.EN_Locale).format(new Date(date));
-    }
+//    private static String formatDate(long date) {
+//        return new SimpleDateFormat("yyyy-MM-dd", OpenDistroSecurityUtils.EN_Locale).format(new Date(date));
+//    }
 
 }

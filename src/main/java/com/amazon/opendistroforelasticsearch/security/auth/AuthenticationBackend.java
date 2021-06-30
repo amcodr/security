@@ -30,27 +30,26 @@
 
 package com.amazon.opendistroforelasticsearch.security.auth;
 
-import org.elasticsearch.ElasticsearchSecurityException;
-
 import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import com.amazon.opendistroforelasticsearch.security.user.User;
+import org.elasticsearch.ElasticsearchSecurityException;
 
-/**
- * Open Distro Security custom authentication backends need to implement this interface.
- * <p/>
- * Authentication backends verify {@link AuthCredentials} and, if successfully verified, return a {@link User}.
- * <p/>
- * Implementation classes must provide a public constructor
- * <p/>
- * {@code public MyHTTPAuthenticator(org.elasticsearch.common.settings.Settings settings, java.nio.file.Path configPath)}
- * <p/>
- * The constructor should not throw any exception in case of an initialization problem.
- * Instead catch all exceptions and log a appropriate error message. A logger can be instantiated like:
- * <p/>
- * {@code private final Logger log = LogManager.getLogger(this.getClass());}
- * 
- * <p/>
- */
+///**
+// * Open Distro Security custom authentication backends need to implement this interface.
+// * <p/>
+// * Authentication backends verify {@link AuthCredentials} and, if successfully verified, return a {@link User}.
+// * <p/>
+// * Implementation classes must provide a public constructor
+// * <p/>
+// * {@code public MyHTTPAuthenticator(org.elasticsearch.common.settings.Settings settings, java.nio.file.Path configPath)}
+// * <p/>
+// * The constructor should not throw any exception in case of an initialization problem.
+// * Instead catch all exceptions and log a appropriate error message. A logger can be instantiated like:
+// * <p/>
+// * {@code private final Logger log = LogManager.getLogger(this.getClass());}
+// *
+// * <p/>
+// */
 public interface AuthenticationBackend {
 
     /**
@@ -59,16 +58,16 @@ public interface AuthenticationBackend {
      */
     String getType();
 
-    /**
-     * Validate credentials and return an authenticated user (or throw an ElasticsearchSecurityException)
-     * <p/>
-     * Results of this method are normally cached so that we not need to query the backend for every authentication attempt.
-     * <p/> 
-     * @param The credentials to be validated, never null
-     * @return the authenticated User, never null
-     * @throws ElasticsearchSecurityException in case an authentication failure 
-     * (when credentials are incorrect, the user does not exist or the backend is not reachable)
-     */
+//    /**
+////     * Validate credentials and return an authenticated user (or throw an ElasticsearchSecurityException)
+////     * <p/>
+////     * Results of this method are normally cached so that we not need to query the backend for every authentication attempt.
+////     * <p/>
+//     * @param The credentials to be validated, never null
+//     * @return the authenticated User, never null
+//     * @throws ElasticsearchSecurityException in case an authentication failure
+//     * (when credentials are incorrect, the user does not exist or the backend is not reachable)
+//     */
     User authenticate(AuthCredentials credentials) throws ElasticsearchSecurityException;
     
     /**

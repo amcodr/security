@@ -85,12 +85,11 @@ public class ConfigHelper {
             }
         }
 
+//        commenting out as it is freezing the flow and perform only validation check for the json loaded
 //        //validate
 //        Settings.builder().loadFromStream("dummy.json", new ByteArrayInputStream(BytesReference.toBytes(retVal)), true).build();
 
 
-//        commenting out as it is freezing the flow and perform only validation check for the json loaded
-//        Settings.builder().loadFromStream("dummy.json",new ByteArrayInputStream(BytesReference.toBytes(retVal))).build();
         return retVal;
     }
 

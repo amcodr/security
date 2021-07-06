@@ -121,7 +121,6 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
 
                                 try {
                                     String lookupDir = System.getProperty("security.default_init.dir");
-//                                    final String cd = lookupDir != null? (lookupDir+"/") : new Environment(settings, configPath).pluginsFile().toAbsolutePath().toString()+"/opendistro_security/securityconfig/";
 
                                     final String cd = lookupDir != null? (lookupDir+"/") : new Environment(settings).pluginsFile().toAbsolutePath().toString()+"/opendistro_security/securityconfig/";
 
@@ -430,8 +429,5 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
         return conf;
     }
 
-//    private static String formatDate(long date) {
-//        return new SimpleDateFormat("yyyy-MM-dd", OpenDistroSecurityUtils.EN_Locale).format(new Date(date));
-//    }
 
 }

@@ -55,8 +55,7 @@ import org.elasticsearch.threadpool.ThreadPool;
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog.Origin;
 import com.amazon.opendistroforelasticsearch.security.ssl.util.ExceptionUtils;
-//import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLRequestHelper;
-//import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLRequestHelper.SSLInfo;
+
 
 
 public class OpenDistroSecurityRestFilter {
@@ -108,37 +107,7 @@ public class OpenDistroSecurityRestFilter {
             return true;
         }
 
-//        if(SSLRequestHelper.containsBadHeader(threadContext, ConfigConstants.OPENDISTRO_SECURITY_CONFIG_PREFIX)) {
-//            final ElasticsearchException exception = ExceptionUtils.createBadHeaderException();
-//            log.error(exception);
-//            auditLog.logBadHeaders(request);
-//            channel.sendResponse(new BytesRestResponse(channel, RestStatus.FORBIDDEN, exception));
-//            return true;
-//        }
 
-//        final SSLInfo sslInfo;
-//        try {
-//            if((sslInfo = SSLRequestHelper.getSSLInfo(settings, configPath, request, principalExtractor)) != null) {
-//                if(sslInfo.getPrincipal() != null) {
-//                    threadContext.putTransient("_opendistro_security_ssl_principal", sslInfo.getPrincipal());
-//                }
-//
-//                if(sslInfo.getX509Certs() != null) {
-//                     threadContext.putTransient("_opendistro_security_ssl_peer_certificates", sslInfo.getX509Certs());
-//                }
-//                threadContext.putTransient("_opendistro_security_ssl_protocol", sslInfo.getProtocol());
-//                threadContext.putTransient("_opendistro_security_ssl_cipher", sslInfo.getCipher());
-//            }
-//        } catch (SSLPeerUnverifiedException e) {
-//            log.error("No ssl info", e);
-//            auditLog.logSSLException(request, e);
-//            channel.sendResponse(new BytesRestResponse(channel, RestStatus.FORBIDDEN, e));
-//            return true;
-//        }
-
-//        if(!compatConfig.restAuthEnabled()) {
-//            return false;
-//        }
 
         if(request.method() != Method.OPTIONS
                 && !"/_opendistro/_security/health".equals(request.path())) {

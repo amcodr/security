@@ -48,8 +48,6 @@ import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 import org.elasticsearch.ElasticsearchSecurityException;
 import org.elasticsearch.common.settings.Settings;
 
-//import com.amazon.opendistroforelasticsearch.security.auth.AuthorizationBackend;
-
 
 public class InternalAuthenticationBackend implements AuthenticationBackend {
 
@@ -85,7 +83,6 @@ public class InternalAuthenticationBackend implements AuthenticationBackend {
             }
         }
 
-//        final List<String> roles = cfg.getAsList(user.getName() + ".roles", Collections.emptyList());
         final List<String> roles = Setting6.getAsList(cfg,user.getName()+".roles",Collections.emptyList());
 
         if(roles != null) {
@@ -177,16 +174,4 @@ public class InternalAuthenticationBackend implements AuthenticationBackend {
         return configurationRepository.getConfiguration(ConfigConstants.CONFIGNAME_INTERNAL_USERS);
     }
 
-//    @Override
-//    public void fillRoles(User user, AuthCredentials credentials) throws ElasticsearchSecurityException {
-//        final Settings cfg = getConfigSettings();
-//        if (cfg == null) {
-//            throw new ElasticsearchSecurityException("Internal authentication backend not configured. May be Open Distro Security is not initialized.");
-//
-//        }
-//        final List<String> roles = cfg.getAsList(credentials.getUsername() + ".roles", Collections.emptyList());
-//        if(roles != null && !roles.isEmpty() && user != null) {
-//            user.addRoles(roles);
-//        }
-//    }
 }

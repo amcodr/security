@@ -243,11 +243,9 @@ public final class SSLConfigConstants {
         
         if(settings != null) {
             if(http) {
-//                configuredCiphers = settings.getAsList(OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_CIPHERS, Collections.emptyList());
 
                 configuredCiphers = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_CIPHERS, Collections.emptyList());
             } else {
-//                configuredCiphers = settings.getAsList(OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_CIPHERS, Collections.emptyList());
 
                 configuredCiphers = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_CIPHERS, Collections.emptyList());
             }

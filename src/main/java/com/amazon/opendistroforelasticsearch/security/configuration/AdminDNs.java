@@ -64,7 +64,6 @@ public class AdminDNs {
         this.injectUserEnabled = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_INJECT_USER_ENABLED, false);
         this.injectAdminUserEnabled = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_UNSUPPORTED_INJECT_ADMIN_USER_ENABLED, false);
 
-//        final List<String> adminDnsA = settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_ADMIN_DN, Collections.emptyList());
 
         final List<String> adminDnsA = Setting6.getAsList(settings,ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_ADMIN_DN, Collections.emptyList());
         for (String dn:adminDnsA) {
@@ -90,7 +89,6 @@ public class AdminDNs {
         
         for (String dnString:impersonationDns.keySet()) {
             try {
-//                allowedImpersonations.putAll(new LdapName(dnString), settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_IMPERSONATION_DN+"."+dnString));
                 allowedImpersonations.putAll(new LdapName(dnString), Setting6.getAsList(settings,ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_IMPERSONATION_DN+"."+dnString));
             } catch (final InvalidNameException e) {
                 log.error("Unable to parse allowedImpersonations dn {}",dnString, e);
@@ -102,7 +100,6 @@ public class AdminDNs {
         final Settings impersonationUsersRest = settings.getByPrefix(ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_REST_IMPERSONATION_USERS+".");
 
         for (String user:impersonationUsersRest.keySet()) {
-//            allowedRestImpersonations.putAll(user, settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_REST_IMPERSONATION_USERS+"."+user));
             allowedRestImpersonations.putAll(user, Setting6.getAsList(settings,ConfigConstants.OPENDISTRO_SECURITY_AUTHCZ_REST_IMPERSONATION_USERS+"."+user));
         }
         

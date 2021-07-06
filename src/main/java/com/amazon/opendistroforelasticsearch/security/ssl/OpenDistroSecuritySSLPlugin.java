@@ -73,12 +73,7 @@ import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.transport.TransportInterceptor;
 import org.elasticsearch.watcher.ResourceWatcherService;
 
-//import com.amazon.opendistroforelasticsearch.security.ssl.http.netty.OpenDistroSecuritySSLNettyHttpServerTransport;
-//import com.amazon.opendistroforelasticsearch.security.ssl.http.netty.ValidatingDispatcher;
-//import com.amazon.opendistroforelasticsearch.security.ssl.rest.OpenDistroSecuritySSLInfoAction;
-//import com.amazon.opendistroforelasticsearch.security.ssl.transport.OpenDistroSecuritySSLNettyTransport;
-//import com.amazon.opendistroforelasticsearch.security.ssl.transport.OpenDistroSecuritySSLTransportInterceptor;
-//import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
+
 
 
 //For ES5 this class has only effect when SSL only plugin is installed
@@ -90,10 +85,8 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
     protected final boolean httpSSLEnabled;
     protected final boolean transportSSLEnabled;
     protected final Settings settings;
-//    protected final OpenDistroSecurityKeyStore odsks;
-//    protected PrincipalExtractor principalExtractor;
+
     protected final Path configPath;
-//    private final static SslExceptionHandler NOOP_SSL_EXCEPTION_HANDLER = new SslExceptionHandler() {};
 
     public OpenDistroSecuritySSLPlugin(final Settings settings, final Path configPath) {
         this(settings, configPath, false);
@@ -106,7 +99,6 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
             this.client = false;
             this.httpSSLEnabled = false;
             this.transportSSLEnabled = false;
-//            this.odsks = null;
             this.configPath = null;
 
             AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -181,8 +173,7 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
 
         httpSSLEnabled = settings.getAsBoolean(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_ENABLED,
                 SSLConfigConstants.OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_DEFAULT);
-//        transportSSLEnabled = settings.getAsBoolean(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED,
-//                SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_DEFAULT);
+
 
 //        setting default transportsslEnable to be false for the sometime
         transportSSLEnabled = settings.getAsBoolean(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED,false);
@@ -193,11 +184,7 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
             System.err.println("SSL not activated for http and/or transport.");
         }
 
-//        if(ExternalOpenDistroSecurityKeyStore.hasExternalSslContext(settings)) {
-//            this.odsks = new ExternalOpenDistroSecurityKeyStore(settings);
-//        } else {
-//            this.odsks = new DefaultOpenDistroSecurityKeyStore(settings, configPath);
-//        }
+
     }
 
 
@@ -207,16 +194,7 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
             CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry,
             NamedXContentRegistry xContentRegistry, NetworkService networkService, Dispatcher dispatcher) {
 
-//        final Map<String, Supplier<HttpServerTransport>> httpTransports = new HashMap<String, Supplier<HttpServerTransport>>(1);
-//        if (!client && httpSSLEnabled) {
-//
-//            final ValidatingDispatcher validatingDispatcher = new ValidatingDispatcher(threadPool.getThreadContext(), dispatcher, settings, configPath, NOOP_SSL_EXCEPTION_HANDLER);
-//            final OpenDistroSecuritySSLNettyHttpServerTransport sgsnht = new OpenDistroSecuritySSLNettyHttpServerTransport(settings, networkService, bigArrays, threadPool, odsks, xContentRegistry, validatingDispatcher, NOOP_SSL_EXCEPTION_HANDLER);
-//
-//            httpTransports.put("com.amazon.opendistroforelasticsearch.security.ssl.http.netty.OpenDistroSecuritySSLNettyHttpServerTransport", () -> sgsnht);
-//
-//        }
-//        return httpTransports;
+
 
         return Collections.emptyMap();
     }
@@ -228,49 +206,25 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
 
         final List<RestHandler> handlers = new ArrayList<RestHandler>(1);
 
-//        if (!client) {
-//            handlers.add(new OpenDistroSecuritySSLInfoAction(settings, configPath, restController, odsks, Objects.requireNonNull(principalExtractor)));
-//        }
+
 
         return handlers;
     }
 
 
 
-//    @Override
-//    public List<TransportInterceptor> getTransportInterceptors(NamedWriteableRegistry namedWriteableRegistry, ThreadContext threadContext) {
-//        List<TransportInterceptor> interceptors = new ArrayList<TransportInterceptor>(1);
-//
-//        if(transportSSLEnabled && !client) {
-//            interceptors.add(new OpenDistroSecuritySSLTransportInterceptor(settings, null, null, NOOP_SSL_EXCEPTION_HANDLER));
-//        }
-//
-//        return interceptors;
-//    }
+
 
 
     @Override
     public List<TransportInterceptor> getTransportInterceptors(ThreadContext threadContext) {
         List<TransportInterceptor> interceptors = new ArrayList<TransportInterceptor>(1);
 
-//        if(transportSSLEnabled && !client) {
-//            interceptors.add(new OpenDistroSecuritySSLTransportInterceptor(settings, null, null, NOOP_SSL_EXCEPTION_HANDLER));
-//        }
+
         return interceptors;
     }
 
-//    @Override
-//       public Map<String, Supplier<Transport>> getTransports(Settings settings, ThreadPool threadPool, PageCacheRecycler pageCacheRecycler,
-//            CircuitBreakerService circuitBreakerService, NamedWriteableRegistry namedWriteableRegistry, NetworkService networkService) {
-//        Map<String, Supplier<Transport>> transports = new HashMap<String, Supplier<Transport>>();
-//        if (transportSSLEnabled) {
-//            transports.put("com.amazon.opendistroforelasticsearch.security.ssl.http.netty.OpenDistroSecuritySSLNettyTransport",
-//                    () -> new OpenDistroSecuritySSLNettyTransport(settings, Version.CURRENT, threadPool, networkService, pageCacheRecycler, namedWriteableRegistry, circuitBreakerService, odsks, NOOP_SSL_EXCEPTION_HANDLER));
-//
-//        }
-//        return transports;
-//
-//    }
+
 
 
     @Override
@@ -285,56 +239,12 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
 
 //        not implementing the ssl transport as of now !
 
-//        final String principalExtractorClass = settings.get(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_PRINCIPAL_EXTRACTOR_CLASS, null);
-//
-//        if(principalExtractorClass == null) {
-//            principalExtractor = new com.amazon.opendistroforelasticsearch.security.ssl.transport.DefaultPrincipalExtractor();
-//        } else {
-//            try {
-//                log.debug("Try to load and instantiate '{}'", principalExtractorClass);
-//                Class<?> principalExtractorClazz = Class.forName(principalExtractorClass);
-//                principalExtractor = (PrincipalExtractor) principalExtractorClazz.newInstance();
-//            } catch (Exception e) {
-//                log.error("Unable to load '{}' due to", principalExtractorClass, e);
-//                throw new ElasticsearchException(e);
-//            }
-//        }
-//
-//        components.add(principalExtractor);
+
 
         return components;
     }
 
-//    @Override
-//    public Collection<Object> createComponents(Client localClient, ClusterService clusterService, ThreadPool threadPool,
-//            ResourceWatcherService resourceWatcherService, ScriptService scriptService, NamedXContentRegistry xContentRegistry,
-//            Environment environment, NodeEnvironment nodeEnvironment, NamedWriteableRegistry namedWriteableRegistry) {
-//
-//        final List<Object> components = new ArrayList<>(1);
-//
-//        if(client) {
-//            return components;
-//        }
-//
-//        final String principalExtractorClass = settings.get(SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_PRINCIPAL_EXTRACTOR_CLASS, null);
-//
-//        if(principalExtractorClass == null) {
-//            principalExtractor = new com.amazon.opendistroforelasticsearch.security.ssl.transport.DefaultPrincipalExtractor();
-//        } else {
-//            try {
-//                log.debug("Try to load and instantiate '{}'", principalExtractorClass);
-//                Class<?> principalExtractorClazz = Class.forName(principalExtractorClass);
-//                principalExtractor = (PrincipalExtractor) principalExtractorClazz.newInstance();
-//            } catch (Exception e) {
-//                log.error("Unable to load '{}' due to", principalExtractorClass, e);
-//                throw new ElasticsearchException(e);
-//            }
-//        }
-//
-//        components.add(principalExtractor);
-//
-//        return components;
-//    }
+
 
     @Override
     public List<Setting<?>> getSettings() {
@@ -398,8 +308,6 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
         settings.add(Setting.boolSetting("opendistro_security.dynamic.authc.basic_internal_auth_domain.transport_enabled",false,Property.NodeScope));
         settings.add(Setting.intSetting("opendistro_security.dynamic.authc.basic_internal_auth_domain.order",4,Property.NodeScope));
         settings.add(Setting.boolSetting("opendistro_security.dynamic.authc.basic_internal_auth_domain.http_authenticator.challenge",true,Property.NodeScope));
-//        settings.add(Setting.memorySizeSetting("opendistro_security.dynamic.authc.basic_internal_auth_domain.http_authenticator.challenge",,Property.NodeScope));
-//        settings.add(Setting.byteSizeSetting("opendistro_security.dynamic.authc.basic_internal_auth_domain.http_authenticator.challenge",,,))
 
         return settings;
     }

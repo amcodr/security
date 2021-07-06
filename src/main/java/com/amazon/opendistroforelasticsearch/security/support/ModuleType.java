@@ -43,10 +43,7 @@ import com.amazon.opendistroforelasticsearch.security.http.HTTPClientCertAuthent
 import com.amazon.opendistroforelasticsearch.security.http.HTTPProxyAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.http.proxy.HTTPExtendedProxyAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
-//import com.amazon.opendistroforelasticsearch.security.auth.AuthorizationBackend;
-//import com.amazon.opendistroforelasticsearch.security.auth.internal.NoOpAuthorizationBackend;
 
-//import com.amazon.opendistroforelasticsearch.security.transport.InterClusterRequestEvaluator;
 
 public enum ModuleType implements Serializable {
 
@@ -105,17 +102,7 @@ public enum ModuleType implements Serializable {
     			moduleType = ModuleType.CUSTOM_AUTHENTICATION_BACKEND;
     		}
 
-//    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
-//    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
-//    		}
 
-//    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
-//    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
-//    		}
-
-//    		if(InterClusterRequestEvaluator.class.isAssignableFrom(clazz)) {
-//    			moduleType = ModuleType.CUSTOM_INTERCLUSTER_REQUEST_EVALUATOR;
-//    		}
 
     		if(PrincipalExtractor.class.isAssignableFrom(clazz)) {
     			moduleType = ModuleType.CUSTOM_PRINCIPAL_EXTRACTOR;

@@ -30,7 +30,6 @@
 
 package com.amazon.opendistroforelasticsearch.security.support;
 
-//import com.amazon.opendistroforelasticsearch.security.tools.Hasher;
 import com.amazon.opendistroforelasticsearch.security.tools.Hasher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

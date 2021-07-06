@@ -39,7 +39,6 @@ import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.threadpool.ThreadPool;
 
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
-//import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
 
 
 public class UserInjector {

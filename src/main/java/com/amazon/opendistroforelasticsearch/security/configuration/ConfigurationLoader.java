@@ -30,9 +30,7 @@
 
 package com.amazon.opendistroforelasticsearch.security.configuration;
 
-//import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-//import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityDeprecationHandler;
-//import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.ActionListener;
@@ -143,7 +141,6 @@ class ConfigurationLoader {
                     MultiGetItemResponse singleResponse = responses[i];
                     if(singleResponse != null && !singleResponse.isFailed()) {
                         GetResponse singleGetResponse = singleResponse.getResponse();
-//                        System.out.println(singleGetResponse.getIndex()+" -/- "+singleGetResponse.getSourceAsString()+"-/-"+singleGetResponse.getSourceAsMap().values()+" -/- "+singleGetResponse.getSourceAsMap().values());
                         if(singleGetResponse.isExists() && !singleGetResponse.isSourceEmpty()) {
                             //success
                             try {
@@ -189,7 +186,6 @@ class ConfigurationLoader {
         XContentParser parser = null;
 
         try {
-//            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, OpenDistroSecurityDeprecationHandler.INSTANCE, ref, XContentType.JSON);
             parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY,ref,XContentType.JSON);
             parser.nextToken();
             parser.nextToken();

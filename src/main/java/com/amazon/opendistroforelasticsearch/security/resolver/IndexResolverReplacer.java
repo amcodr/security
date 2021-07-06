@@ -92,10 +92,8 @@ import org.elasticsearch.common.io.stream.Writeable;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.IndexNotFoundException;
-//import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotUtils;
-//import org.elasticsearch.transport.RemoteClusterService;
 import org.elasticsearch.action.search.RemoteClusterService;
 import org.elasticsearch.transport.TransportRequest;
 
@@ -184,33 +182,8 @@ public final class IndexResolverReplacer implements ConfigurationChangeListener 
         final RemoteClusterService remoteClusterService = OpenDistroSecurityPlugin.GuiceHolder.getRemoteClusterService();
 
 
-//        no need for cross cluster search feature here , hende isCrossClusterSearchEnabled is always false , commenting out
-//        if(remoteClusterService.isCrossClusterSearchEnabled() && request != null && (request instanceof FieldCapabilitiesRequest || request instanceof SearchRequest)) {
-//            remoteIndices = new HashSet<>();
-//            final Map<String, OriginalIndices> remoteClusterIndices = OpenDistroSecurityPlugin.GuiceHolder.getRemoteClusterService().groupIndices(
-//                    indicesOptions, requestedPatterns0, idx -> resolver.hasIndexOrAlias(idx, clusterService.state()));
-//            final Set<String> remoteClusters = remoteClusterIndices.keySet().stream().filter(k->!RemoteClusterService.LOCAL_CLUSTER_GROUP_KEY.equals(k)).collect(Collectors.toSet());
-//            for(String remoteCluster: remoteClusters) {
-//                for(String remoteIndex: remoteClusterIndices.get(remoteCluster).indices()) {
-//                    remoteIndices.add(RemoteClusterService.buildRemoteIndexName(remoteCluster, remoteIndex));
-//                }
-//            }
-//
-//            final Iterator<String> iterator = localRequestedPatterns.iterator();
-//            while(iterator.hasNext()) {
-//                final String[] split = iterator.next().split(String.valueOf(RemoteClusterService.REMOTE_CLUSTER_INDEX_SEPARATOR), 2);
-//                if(split.length > 1 && WildcardMatcher.matchAny(split[0], remoteClusters)) {
-//                    iterator.remove();
-//                }
-//            }
-//
-//            if(log.isTraceEnabled()) {
-//                log.trace("CCS is enabled, we found this local patterns "+localRequestedPatterns+" and this remote patterns: "+remoteIndices);
-//            }
-//
-//        } else {
+
             remoteIndices = Collections.emptySet();
-//        }
 
         final Set<String> matchingAliases;
         final Set<String> matchingIndices;

@@ -1,7 +1,0 @@
-opendistro_security_all_access:
-  cluster:
-    - '*'
-  indices:
-    '*':
-      '*':  
-        - '*'

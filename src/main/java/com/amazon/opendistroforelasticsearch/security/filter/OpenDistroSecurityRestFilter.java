@@ -32,8 +32,12 @@ package com.amazon.opendistroforelasticsearch.security.filter;
 
 import java.nio.file.Path;
 
-import javax.net.ssl.SSLPeerUnverifiedException;
-
+import com.amazon.opendistroforelasticsearch.security.auth.BackendRegistry;
+import com.amazon.opendistroforelasticsearch.security.configuration.CompatConfig;
+import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import com.amazon.opendistroforelasticsearch.security.support.HTTPHelper;
+import com.amazon.opendistroforelasticsearch.security.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
@@ -50,15 +54,8 @@ import org.elasticsearch.threadpool.ThreadPool;
 
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog.Origin;
-import com.amazon.opendistroforelasticsearch.security.auth.BackendRegistry;
-import com.amazon.opendistroforelasticsearch.security.configuration.CompatConfig;
-import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
 import com.amazon.opendistroforelasticsearch.security.ssl.util.ExceptionUtils;
-import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLRequestHelper;
-import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLRequestHelper.SSLInfo;
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-import com.amazon.opendistroforelasticsearch.security.support.HTTPHelper;
-import com.amazon.opendistroforelasticsearch.security.user.User;
+
 
 public class OpenDistroSecurityRestFilter {
 
@@ -83,10 +80,10 @@ public class OpenDistroSecurityRestFilter {
         this.configPath = configPath;
         this.compatConfig = compatConfig;
     }
-    
+
     public RestHandler wrap(RestHandler original) {
         return new RestHandler() {
-            
+
             @Override
             public void handleRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
                 org.apache.logging.log4j.ThreadContext.clearAll();
@@ -100,7 +97,7 @@ public class OpenDistroSecurityRestFilter {
     private boolean checkAndAuthenticateRequest(RestRequest request, RestChannel channel, NodeClient client) throws Exception {
 
         threadContext.putTransient(ConfigConstants.OPENDISTRO_SECURITY_ORIGIN, Origin.REST.toString());
-        
+
         if(HTTPHelper.containsBadHeader(request)) {
             final ElasticsearchException exception = ExceptionUtils.createBadHeaderException();
             log.error(exception);
@@ -108,40 +105,9 @@ public class OpenDistroSecurityRestFilter {
             channel.sendResponse(new BytesRestResponse(channel, RestStatus.FORBIDDEN, exception));
             return true;
         }
-        
-        if(SSLRequestHelper.containsBadHeader(threadContext, ConfigConstants.OPENDISTRO_SECURITY_CONFIG_PREFIX)) {
-            final ElasticsearchException exception = ExceptionUtils.createBadHeaderException();
-            log.error(exception);
-            auditLog.logBadHeaders(request);
-            channel.sendResponse(new BytesRestResponse(channel, RestStatus.FORBIDDEN, exception));
-            return true;
-        }
 
-        final SSLInfo sslInfo;
-        try {
-            if((sslInfo = SSLRequestHelper.getSSLInfo(settings, configPath, request, principalExtractor)) != null) {
-                if(sslInfo.getPrincipal() != null) {
-                    threadContext.putTransient("_opendistro_security_ssl_principal", sslInfo.getPrincipal());
-                }
-                
-                if(sslInfo.getX509Certs() != null) {
-                     threadContext.putTransient("_opendistro_security_ssl_peer_certificates", sslInfo.getX509Certs());
-                }
-                threadContext.putTransient("_opendistro_security_ssl_protocol", sslInfo.getProtocol());
-                threadContext.putTransient("_opendistro_security_ssl_cipher", sslInfo.getCipher());
-            }
-        } catch (SSLPeerUnverifiedException e) {
-            log.error("No ssl info", e);
-            auditLog.logSSLException(request, e);
-            channel.sendResponse(new BytesRestResponse(channel, RestStatus.FORBIDDEN, e));
-            return true;
-        }
-        
-        if(!compatConfig.restAuthEnabled()) {
-            return false;
-        }
 
-        if(request.method() != Method.OPTIONS 
+        if(request.method() != Method.OPTIONS
                 && !"/_opendistro/_security/health".equals(request.path())) {
             if (!registry.authenticate(request, channel, threadContext)) {
                 // another roundtrip
@@ -152,7 +118,7 @@ public class OpenDistroSecurityRestFilter {
                 org.apache.logging.log4j.ThreadContext.put("user", ((User)threadContext.getTransient(ConfigConstants.OPENDISTRO_SECURITY_USER)).getName());
             }
         }
-        
+
         return false;
     }
 }

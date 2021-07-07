@@ -34,6 +34,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.amazon.opendistroforelasticsearch.security.http.HTTPProxyAuthenticator;
+import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.Strings;
@@ -42,11 +44,9 @@ import org.elasticsearch.common.util.concurrent.ThreadContext;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
 
-import com.amazon.opendistroforelasticsearch.security.http.HTTPProxyAuthenticator;
-import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import com.google.common.base.Joiner;
 
-public class HTTPExtendedProxyAuthenticator extends HTTPProxyAuthenticator{
+public class HTTPExtendedProxyAuthenticator extends HTTPProxyAuthenticator {
 
     private static final String ATTR_PROXY = "attr.proxy.";
     private static final String ATTR_PROXY_USERNAME = "attr.proxy.username";

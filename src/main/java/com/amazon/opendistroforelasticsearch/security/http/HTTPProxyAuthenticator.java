@@ -32,6 +32,9 @@ package com.amazon.opendistroforelasticsearch.security.http;
 
 import java.nio.file.Path;
 
+import com.amazon.opendistroforelasticsearch.security.auth.HTTPAuthenticator;
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchSecurityException;
@@ -40,10 +43,6 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.util.concurrent.ThreadContext;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestRequest;
-
-import com.amazon.opendistroforelasticsearch.security.auth.HTTPAuthenticator;
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 
 public class HTTPProxyAuthenticator implements HTTPAuthenticator {
 
@@ -71,7 +70,6 @@ public class HTTPProxyAuthenticator implements HTTPAuthenticator {
             log.debug("userHeader {}, value {}", userHeader, userHeader == null?null:request.header(userHeader));
             log.debug("rolesHeader {}, value {}", rolesHeader, rolesHeader == null?null:request.header(rolesHeader));
         }
-
         if (!Strings.isNullOrEmpty(userHeader) && !Strings.isNullOrEmpty((String) request.header(userHeader))) {
 
             String[] backendRoles = null;

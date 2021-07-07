@@ -8,7 +8,9 @@
   <dependencySets>
     <dependencySet>
       <useStrictFiltering>true</useStrictFiltering>
-      <outputDirectory>${file.separator}</outputDirectory>
+<!--      <outputDirectory>${file.separator}</outputDirectory>-->
+      <outputDirectory>elasticsearch</outputDirectory>
+
       <useProjectArtifact>true</useProjectArtifact>
       <useTransitiveFiltering>true</useTransitiveFiltering>
     </dependencySet>
@@ -16,7 +18,9 @@
   <fileSets>
     <fileSet>
       <directory>${basedir}/src/main/assemblies/</directory>
-      <outputDirectory>${file.separator}</outputDirectory>
+<!--      <outputDirectory>${file.separator}</outputDirectory>-->
+      <outputDirectory>elasticsearch</outputDirectory>
+
       <filtered>false</filtered>
       <includes>
         <include>LICENSE</include>
@@ -24,7 +28,9 @@
     </fileSet>
     <fileSet>
       <directory>${project.basedir}</directory>
-      <outputDirectory>${file.separator}</outputDirectory>
+<!--      <outputDirectory>${file.separator}</outputDirectory>-->
+      <outputDirectory>elasticsearch</outputDirectory>
+
       <includes>
         <include>tools/**</include>
         <include>securityconfig/**</include>
@@ -32,7 +38,9 @@
       <fileMode>0755</fileMode>
     </fileSet>
     <fileSet>
-      <outputDirectory>${file.separator}</outputDirectory>
+<!--      <outputDirectory>${file.separator}</outputDirectory>-->
+      <outputDirectory>elasticsearch</outputDirectory>
+
       <includes>
         <include>plugin-descriptor.properties</include>
         <include>plugin-security.policy</include>

@@ -57,7 +57,8 @@ public class ModuleInfo implements Serializable, Writeable{
 	}
 
 	public ModuleInfo(final StreamInput in) throws IOException {
-		moduleType = in.readEnum(ModuleType.class);
+//		moduleType = in.readEnum(ModuleType.class);
+		moduleType = StreamInputOutputEnum.readEnum(in,ModuleType.class);
 		classname = in.readString();
 		classpath = in.readString();
 		version = in.readString();
@@ -106,7 +107,8 @@ public class ModuleInfo implements Serializable, Writeable{
 	
 	@Override
 	public void writeTo(StreamOutput out) throws IOException {
-        out.writeEnum(moduleType);
+//        out.writeEnum(moduleType);
+        StreamInputOutputEnum.writeEnum(out,moduleType);
         out.writeString(classname);
         out.writeString(classpath);
         out.writeString(version);

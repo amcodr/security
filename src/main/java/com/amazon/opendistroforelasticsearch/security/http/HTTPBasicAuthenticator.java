@@ -32,6 +32,8 @@ package com.amazon.opendistroforelasticsearch.security.http;
 
 import java.nio.file.Path;
 
+import com.amazon.opendistroforelasticsearch.security.support.HTTPHelper;
+import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.settings.Settings;
@@ -42,8 +44,6 @@ import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.rest.RestStatus;
 
 import com.amazon.opendistroforelasticsearch.security.auth.HTTPAuthenticator;
-import com.amazon.opendistroforelasticsearch.security.support.HTTPHelper;
-import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 
 //TODO FUTURE allow only if protocol==https
 public class HTTPBasicAuthenticator implements HTTPAuthenticator {

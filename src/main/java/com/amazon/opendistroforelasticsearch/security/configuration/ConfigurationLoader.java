@@ -30,14 +30,6 @@
 
 package com.amazon.opendistroforelasticsearch.security.configuration;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,11 +47,17 @@ import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.XContentType;
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
 import org.elasticsearch.threadpool.ThreadPool;
 
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityDeprecationHandler;
-import com.amazon.opendistroforelasticsearch.security.support.OpenDistroSecurityUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 class ConfigurationLoader {
 
@@ -143,6 +141,7 @@ class ConfigurationLoader {
                     MultiGetItemResponse singleResponse = responses[i];
                     if(singleResponse != null && !singleResponse.isFailed()) {
                         GetResponse singleGetResponse = singleResponse.getResponse();
+//                        System.out.println(singleGetResponse.getIndex()+" -/- "+singleGetResponse.getSourceAsString()+"-/-"+singleGetResponse.getSourceAsMap().values()+" -/- "+singleGetResponse.getSourceAsMap().values());
                         if(singleGetResponse.isExists() && !singleGetResponse.isSourceEmpty()) {
                             //success
                             try {
@@ -188,9 +187,10 @@ class ConfigurationLoader {
         XContentParser parser = null;
 
         try {
-            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY, OpenDistroSecurityDeprecationHandler.INSTANCE, ref, XContentType.JSON);
+            parser = XContentHelper.createParser(NamedXContentRegistry.EMPTY,ref,XContentType.JSON);
             parser.nextToken();
             parser.nextToken();
+
 
             if(!id.equals((parser.currentName()))) {
                 log.error("Cannot parse config for type {} because {}!={}", id, id, parser.currentName());
@@ -203,11 +203,12 @@ class ConfigurationLoader {
             return new Tuple<Long, Settings>(version, Settings.builder().loadFromSource(OpenDistroSecurityUtils.replaceEnvVars(new String(content, StandardCharsets.UTF_8), settings), XContentType.JSON).build());
         } finally {
             if(parser != null) {
-                try {
+//                try {
                     parser.close();
-                } catch (IOException e) {
-                    //ignore
-                }
+//                } catch (IOException e) {
+////                    throw e;
+//                    //ignore
+//                }
             }
         }
     }

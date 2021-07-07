@@ -32,15 +32,16 @@ package com.amazon.opendistroforelasticsearch.security.ssl.util;
 
 
 public class Utils {
+    @SafeVarargs
     public static <T> T coalesce(T first, T... more) {
         if (first != null) {
             return first;
         }
-        
+
         if(more == null || more.length == 0) {
             return null;
         }
-        
+
         for (int i = 0; i < more.length; i++) {
             T t = more[i];
             if(t != null) {

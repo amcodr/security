@@ -30,10 +30,10 @@
 
 package com.amazon.opendistroforelasticsearch.security.tools;
 
-import java.io.Console;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Objects;
+
+
+import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
+
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -41,7 +41,11 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
+
+import java.io.Console;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Hasher {
 
@@ -55,7 +59,7 @@ public class Hasher {
         final CommandLineParser parser = new DefaultParser();
         try {
             final CommandLine line = parser.parse(options, args);
-            
+
             if(line.hasOption("p")) {
                 System.out.println(hash(line.getOptionValue("p").toCharArray()));
             } else if(line.hasOption("env")) {
@@ -71,7 +75,7 @@ public class Hasher {
                 }
                 final char[] passwd = console.readPassword("[%s]", "Password:");
                 System.out.println(hash(passwd));
-            }  
+            }
         } catch (final Exception exp) {
             System.err.println("Parsing failed.  Reason: " + exp.getMessage());
             formatter.printHelp("hasher.sh", options, true);

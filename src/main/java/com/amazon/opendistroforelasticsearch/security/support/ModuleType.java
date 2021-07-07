@@ -35,17 +35,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.amazon.opendistroforelasticsearch.security.auth.AuthenticationBackend;
-import com.amazon.opendistroforelasticsearch.security.auth.AuthorizationBackend;
 import com.amazon.opendistroforelasticsearch.security.auth.HTTPAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.auth.internal.InternalAuthenticationBackend;
 import com.amazon.opendistroforelasticsearch.security.auth.internal.NoOpAuthenticationBackend;
-import com.amazon.opendistroforelasticsearch.security.auth.internal.NoOpAuthorizationBackend;
 import com.amazon.opendistroforelasticsearch.security.http.HTTPBasicAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.http.HTTPClientCertAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.http.HTTPProxyAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.http.proxy.HTTPExtendedProxyAuthenticator;
 import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
-import com.amazon.opendistroforelasticsearch.security.transport.InterClusterRequestEvaluator;
+
 
 public enum ModuleType implements Serializable {
 
@@ -61,7 +59,7 @@ public enum ModuleType implements Serializable {
 	SAML_AUTHENTICATION_BACKEND("SAML authentication backend", "com.amazon.dlic.auth.http.saml.HTTPSamlAuthenticator", Boolean.TRUE),
 	INTERNAL_USERS_AUTHENTICATION_BACKEND("Internal users authentication backend", InternalAuthenticationBackend.class.getName(), Boolean.FALSE),
 	NOOP_AUTHENTICATION_BACKEND("Noop authentication backend", NoOpAuthenticationBackend.class.getName(), Boolean.FALSE),
-	NOOP_AUTHORIZATION_BACKEND("Noop authorization backend", NoOpAuthorizationBackend.class.getName(), Boolean.FALSE),
+//	NOOP_AUTHORIZATION_BACKEND("Noop authorization backend", NoOpAuthorizationBackend.class.getName(), Boolean.FALSE),
 	HTTP_BASIC_AUTHENTICATOR("HTTP Basic Authenticator", HTTPBasicAuthenticator.class.getName(), Boolean.FALSE),
 	HTTP_PROXY_AUTHENTICATOR("HTTP Proxy Authenticator", HTTPProxyAuthenticator.class.getName(), Boolean.FALSE),
     HTTP_EXT_PROXY_AUTHENTICATOR("HTTP Extended Proxy Authenticator", HTTPExtendedProxyAuthenticator.class.getName(), Boolean.FALSE),
@@ -104,17 +102,17 @@ public enum ModuleType implements Serializable {
     			moduleType = ModuleType.CUSTOM_AUTHENTICATION_BACKEND;
     		}
 
-    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
-    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
-    		}
+//    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
+//    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
+//    		}
 
-    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
-    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
-    		}
+//    		if(AuthorizationBackend.class.isAssignableFrom(clazz)) {
+//    			moduleType = ModuleType.CUSTOM_AUTHORIZATION_BACKEND;
+//    		}
 
-    		if(InterClusterRequestEvaluator.class.isAssignableFrom(clazz)) {
-    			moduleType = ModuleType.CUSTOM_INTERCLUSTER_REQUEST_EVALUATOR;
-    		}
+//    		if(InterClusterRequestEvaluator.class.isAssignableFrom(clazz)) {
+//    			moduleType = ModuleType.CUSTOM_INTERCLUSTER_REQUEST_EVALUATOR;
+//    		}
 
     		if(PrincipalExtractor.class.isAssignableFrom(clazz)) {
     			moduleType = ModuleType.CUSTOM_PRINCIPAL_EXTRACTOR;

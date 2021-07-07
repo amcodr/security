@@ -30,6 +30,7 @@
 
 package com.amazon.opendistroforelasticsearch.security.ssl.transport;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
@@ -43,13 +44,11 @@ import org.elasticsearch.ExceptionsHelper;
 import org.elasticsearch.Version;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
-import org.elasticsearch.common.network.CloseableChannel;
 import org.elasticsearch.common.network.NetworkService;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.util.PageCacheRecycler;
+import org.elasticsearch.common.util.BigArrays;
 import org.elasticsearch.indices.breaker.CircuitBreakerService;
 import org.elasticsearch.threadpool.ThreadPool;
-import org.elasticsearch.transport.TcpChannel;
 import org.elasticsearch.transport.netty4.Netty4Transport;
 
 import com.amazon.opendistroforelasticsearch.security.ssl.OpenDistroSecurityKeyStore;
@@ -71,59 +70,61 @@ public class OpenDistroSecuritySSLNettyTransport extends Netty4Transport {
     private final OpenDistroSecurityKeyStore odks;
     private final SslExceptionHandler errorHandler;
 
-    public OpenDistroSecuritySSLNettyTransport(final Settings settings, final Version version, final ThreadPool threadPool, final NetworkService networkService,
-        final PageCacheRecycler pageCacheRecycler, final NamedWriteableRegistry namedWriteableRegistry,
+    public OpenDistroSecuritySSLNettyTransport(final Settings settings, final Version version, final ThreadPool threadPool, final NetworkService networkService, final NamedWriteableRegistry namedWriteableRegistry,
         final CircuitBreakerService circuitBreakerService, final OpenDistroSecurityKeyStore odks, final SslExceptionHandler errorHandler) {
-        super(settings, version, threadPool, networkService, pageCacheRecycler, namedWriteableRegistry, circuitBreakerService);
+        super(settings,threadPool,networkService,new BigArrays(settings,circuitBreakerService),namedWriteableRegistry,circuitBreakerService);
         this.odks = odks;
         this.errorHandler = errorHandler;
     }
 
     @Override
-    public void onException(TcpChannel channel, Exception e) {
-        
-        
+    protected void onException(Channel channel, Exception e) throws IOException {
         if (lifecycle.started()) {
-            
+
             Throwable cause = e;
-            
+
             if(e instanceof DecoderException && e != null) {
                 cause = e.getCause();
             }
-            
+
             errorHandler.logError(cause, false);
-            
+
             if(cause instanceof NotSslRecordException) {
-                logger.warn("Someone ({}) speaks transport plaintext instead of ssl, will close the channel", channel.getLocalAddress());
-                CloseableChannel.closeChannel(channel, false);
+                logger.warn("Someone ({}) speaks transport plaintext instead of ssl, will close the channel", channel.localAddress());
+                channel.close();
                 return;
             } else if (cause instanceof SSLException) {
                 logger.error("SSL Problem "+cause.getMessage(),cause);
-                CloseableChannel.closeChannel(channel, false);
+                channel.close();
                 return;
             } else if (cause instanceof SSLHandshakeException) {
                 logger.error("Problem during handshake "+cause.getMessage());
-                CloseableChannel.closeChannel(channel, false);
+                channel.close();
                 return;
             }
         }
         super.onException(channel, e);
     }
 
+
+
     @Override
-    protected ChannelHandler getServerChannelInitializer(String name) {
+    protected ChannelHandler getServerChannelInitializer(String name, Settings settings) {
         return new SSLServerChannelInitializer(name);
     }
-    
+
+
+
     @Override
-    protected ChannelHandler getClientChannelInitializer(DiscoveryNode node) {
-        return new SSLClientChannelInitializer(node);
+    protected ChannelHandler getClientChannelInitializer() {
+        return new SSLClientChannelInitializer();
     }
 
-    protected class SSLServerChannelInitializer extends Netty4Transport.ServerChannelInitializer {
+
+    protected class SSLServerChannelInitializer extends ServerChannelInitializer {
 
         public SSLServerChannelInitializer(String name) {
-            super(name);
+            super(name, OpenDistroSecuritySSLNettyTransport.this.settings);
         }
 
         @Override
@@ -236,9 +237,17 @@ public class OpenDistroSecuritySSLNettyTransport extends Netty4Transport {
         }
     }
 
-    protected class SSLClientChannelInitializer extends Netty4Transport.ClientChannelInitializer {
+    protected class SSLClientChannelInitializer extends ClientChannelInitializer {
         private final boolean hostnameVerificationEnabled;
         private final boolean hostnameVerificationResovleHostName;
+
+//        creating a independent constructor as node has not been used !
+        public SSLClientChannelInitializer() {
+            hostnameVerificationEnabled = settings.getAsBoolean(
+                    SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENFORCE_HOSTNAME_VERIFICATION, true);
+            hostnameVerificationResovleHostName = settings.getAsBoolean(
+                    SSLConfigConstants.OPENDISTRO_SECURITY_SSL_TRANSPORT_ENFORCE_HOSTNAME_VERIFICATION_RESOLVE_HOST_NAME, true);
+        }
 
         public SSLClientChannelInitializer(DiscoveryNode node) {
             hostnameVerificationEnabled = settings.getAsBoolean(

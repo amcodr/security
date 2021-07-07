@@ -46,12 +46,12 @@ import org.elasticsearch.common.io.stream.Writeable;
 
 import com.google.common.collect.Lists;
 
-/**
- * A authenticated user and attributes associated to them (like roles, tenant, custom attributes)
- * <p/>
- * <b>Do not subclass from this class!</b>
- *
- */
+///**
+// * A authenticated user and attributes associated to them (like roles, tenant, custom attributes)
+// * <p/>
+// * <b>Do not subclass from this class!</b>
+// *
+// */
 public class User implements Serializable, Writeable, CustomAttributesAware {
 
     public static final User ANONYMOUS = new User("opendistro_security_anonymous", Lists.newArrayList("opendistro_security_anonymous_backendrole"), null);
@@ -153,7 +153,7 @@ public class User implements Serializable, Writeable, CustomAttributesAware {
     /**
      * Associate this user with a set of roles
      * 
-     * @param roles The roles
+//     * @param roles The roles
      */
     public final void addAttributes(final Map<String,String> attributes) {
         if(attributes != null) {
@@ -231,7 +231,8 @@ public class User implements Serializable, Writeable, CustomAttributesAware {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.writeString(name);
-        out.writeStringCollection(new ArrayList<String>(roles));
+//        out.writeStringCollection(new ArrayList<String>(roles));
+        out.writeStringList(new ArrayList<String>(roles));
         out.writeString(requestedTenant);
         out.writeMap(attributes, StreamOutput::writeString, StreamOutput::writeString);
     }

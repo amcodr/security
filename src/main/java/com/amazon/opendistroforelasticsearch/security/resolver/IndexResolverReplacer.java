@@ -39,7 +39,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -49,6 +48,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
+import com.amazon.opendistroforelasticsearch.security.configuration.ClusterInfoHolder;
+import com.amazon.opendistroforelasticsearch.security.support.SnapshotRestoreHelper;
+import com.amazon.opendistroforelasticsearch.security.support.WildcardMatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
@@ -56,7 +58,6 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.IndicesRequest;
 import org.elasticsearch.action.IndicesRequest.Replaceable;
-import org.elasticsearch.action.OriginalIndices;
 import org.elasticsearch.action.admin.cluster.snapshots.restore.RestoreSnapshotRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest.AliasActions;
@@ -66,7 +67,6 @@ import org.elasticsearch.action.bulk.BulkItemRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkShardRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.fieldcaps.FieldCapabilitiesRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequest.Item;
@@ -77,7 +77,6 @@ import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.support.IndicesOptions;
-import org.elasticsearch.action.support.nodes.BaseNodesRequest;
 import org.elasticsearch.action.support.replication.ReplicationRequest;
 import org.elasticsearch.action.support.single.shard.SingleShardRequest;
 import org.elasticsearch.action.termvectors.MultiTermVectorsRequest;
@@ -93,17 +92,13 @@ import org.elasticsearch.common.io.stream.Writeable;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.Index;
 import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.elasticsearch.snapshots.SnapshotUtils;
-import org.elasticsearch.transport.RemoteClusterService;
+import org.elasticsearch.action.search.RemoteClusterService;
 import org.elasticsearch.transport.TransportRequest;
 
 import com.amazon.opendistroforelasticsearch.security.OpenDistroSecurityPlugin;
-import com.amazon.opendistroforelasticsearch.security.configuration.ClusterInfoHolder;
 import com.amazon.opendistroforelasticsearch.security.configuration.ConfigurationChangeListener;
-import com.amazon.opendistroforelasticsearch.security.support.SnapshotRestoreHelper;
-import com.amazon.opendistroforelasticsearch.security.support.WildcardMatcher;
 
 
 import com.google.common.collect.Sets;
@@ -186,32 +181,10 @@ public final class IndexResolverReplacer implements ConfigurationChangeListener 
 
         final RemoteClusterService remoteClusterService = OpenDistroSecurityPlugin.GuiceHolder.getRemoteClusterService();
 
-        if(remoteClusterService.isCrossClusterSearchEnabled() && request != null && (request instanceof FieldCapabilitiesRequest || request instanceof SearchRequest)) {
-            remoteIndices = new HashSet<>();
-            final Map<String, OriginalIndices> remoteClusterIndices = OpenDistroSecurityPlugin.GuiceHolder.getRemoteClusterService().groupIndices(
-                    indicesOptions, requestedPatterns0, idx -> resolver.hasIndexOrAlias(idx, clusterService.state()));
-            final Set<String> remoteClusters = remoteClusterIndices.keySet().stream().filter(k->!RemoteClusterService.LOCAL_CLUSTER_GROUP_KEY.equals(k)).collect(Collectors.toSet());
-            for(String remoteCluster: remoteClusters) {
-                for(String remoteIndex: remoteClusterIndices.get(remoteCluster).indices()) {
-                    remoteIndices.add(RemoteClusterService.buildRemoteIndexName(remoteCluster, remoteIndex));
-                }
-            }
 
-            final Iterator<String> iterator = localRequestedPatterns.iterator();
-            while(iterator.hasNext()) {
-                final String[] split = iterator.next().split(String.valueOf(RemoteClusterService.REMOTE_CLUSTER_INDEX_SEPARATOR), 2);
-                if(split.length > 1 && WildcardMatcher.matchAny(split[0], remoteClusters)) {
-                    iterator.remove();
-                }
-            }
-            
-            if(log.isTraceEnabled()) {
-                log.trace("CCS is enabled, we found this local patterns "+localRequestedPatterns+" and this remote patterns: "+remoteIndices);
-            }
-            
-        } else {
+//        no need for cross cluster search feature here , hende isCrossClusterSearchEnabled is always false , commenting out
+
             remoteIndices = Collections.emptySet();
-        }
 
         final Set<String> matchingAliases;
         final Set<String> matchingIndices;
@@ -722,12 +695,21 @@ public final class IndexResolverReplacer implements ConfigurationChangeListener 
 
         @Override
         public void writeTo(StreamOutput out) throws IOException {
-            out.writeStringCollection(new ArrayList<>(aliases));
-            out.writeStringCollection(new ArrayList<>(indices));
-            out.writeStringCollection(new ArrayList<>(allIndices));
-            out.writeStringCollection(new ArrayList<>(types));
-            out.writeStringCollection(new ArrayList<>(originalRequested));
-            out.writeStringCollection(new ArrayList<>(remoteIndices));
+
+//            resolving error
+//            out.writeStringCollection(new ArrayList<>(aliases));
+//            out.writeStringCollection(new ArrayList<>(indices));
+//            out.writeStringCollection(new ArrayList<>(allIndices));
+//            out.writeStringCollection(new ArrayList<>(types));
+//            out.writeStringCollection(new ArrayList<>(originalRequested));
+//            out.writeStringCollection(new ArrayList<>(remoteIndices));
+
+            out.writeStringList(new ArrayList<>(aliases));
+            out.writeStringList(new ArrayList<>(indices));
+            out.writeStringList(new ArrayList<>(allIndices));
+            out.writeStringList(new ArrayList<>(types));
+            out.writeStringList(new ArrayList<>(originalRequested));
+            out.writeStringList(new ArrayList<>(remoteIndices));
         }
     }
 
@@ -791,12 +773,12 @@ public final class IndexResolverReplacer implements ConfigurationChangeListener 
         return true;
     }
 
-    /**
-     * new
-     * @param request
-     * @param newIndices
-     * @return
-     */
+//    /**
+//     * new
+//     * @param request
+////     * @param newIndices
+//     * @return
+//     */
     @SuppressWarnings("rawtypes")
     private boolean getOrReplaceAllIndices(final Object request, final IndicesProvider provider, boolean allowEmptyIndices) {
 
@@ -936,22 +918,22 @@ public final class IndexResolverReplacer implements ConfigurationChangeListener 
                 return false;
             }
             ((ReplicationRequest) request).index(newIndices.length!=1?null:newIndices[0]);
-        } else if (request instanceof MultiGetRequest.Item) {
-            String[] newIndices = provider.provide(((MultiGetRequest.Item) request).indices(), request, true);
+        } else if (request instanceof Item) {
+            String[] newIndices = provider.provide(((Item) request).indices(), request, true);
             if(checkIndices(request, newIndices, true, allowEmptyIndices) == false) {
                 return false;
             }
-            ((MultiGetRequest.Item) request).index(newIndices.length!=1?null:newIndices[0]);
+            ((Item) request).index(newIndices.length!=1?null:newIndices[0]);
         } else if (request instanceof CreateIndexRequest) {
             String[] newIndices = provider.provide(((CreateIndexRequest) request).indices(), request, true);
             if(checkIndices(request, newIndices, true, allowEmptyIndices) == false) {
                 return false;
             }
             ((CreateIndexRequest) request).index(newIndices.length!=1?null:newIndices[0]);
-        } else if (request instanceof ReindexRequest) {
-            result = getOrReplaceAllIndices(((ReindexRequest) request).getDestination(), provider, false) && result;
-            result = getOrReplaceAllIndices(((ReindexRequest) request).getSearchRequest(), provider, false) && result;
-        } else if (request instanceof BaseNodesRequest) {
+//        } else if (request instanceof ReindexRequest) {
+//            result = getOrReplaceAllIndices(((ReindexRequest) request).getDestination(), provider, false) && result;
+//            result = getOrReplaceAllIndices(((ReindexRequest) request).getSearchRequest(), provider, false) && result;
+//        } else if (request instanceof BaseNodesRequest) {
             //do nothing
         } else if (request instanceof MainRequest) {
             //do nothing

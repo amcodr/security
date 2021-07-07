@@ -13,20 +13,20 @@
   ~ limitations under the License.
   -->
 
-<!--
-  ~ Portions Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License").
-  ~ You may not use this file except in compliance with the License.
-  ~ A copy of the License is located at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ or in the "license" file accompanying this file. This file is distributed
-  ~ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-  ~ express or implied. See the License for the specific language governing
-  ~ permissions and limitations under the License.
-  -->
+        <!--
+          ~ Portions Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+          ~
+          ~ Licensed under the Apache License, Version 2.0 (the "License").
+          ~ You may not use this file except in compliance with the License.
+          ~ A copy of the License is located at
+          ~
+          ~ http://www.apache.org/licenses/LICENSE-2.0
+          ~
+          ~ or in the "license" file accompanying this file. This file is distributed
+          ~ on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+          ~ express or implied. See the License for the specific language governing
+          ~ permissions and limitations under the License.
+          -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -72,7 +72,7 @@
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/
         </sonatypeOssDistMgmtSnapshotsUrl>
         <dependency.locations.enabled>false</dependency.locations.enabled>
-        <elasticsearch.version>6.8.6</elasticsearch.version>
+        <elasticsearch.version>5.4.3</elasticsearch.version>
 
         <!-- deps -->
         <netty-native.version>2.0.20.Final</netty-native.version>
@@ -205,17 +205,17 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-            <version>${elasticsearch.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>elasticsearch</artifactId>
-                    <groupId>org.elasticsearch</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch.client</groupId>-->
+<!--            <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>elasticsearch</artifactId>-->
+<!--                    <groupId>org.elasticsearch</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -389,19 +389,19 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.elasticsearch.plugin</groupId>
-            <artifactId>parent-join-client</artifactId>
-            <version>${elasticsearch.version}</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch.plugin</groupId>-->
+<!--            <artifactId>parent-join-client</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>org.elasticsearch.plugin</groupId>
-            <artifactId>aggs-matrix-stats-client</artifactId>
-            <version>${elasticsearch.version}</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch.plugin</groupId>-->
+<!--            <artifactId>aggs-matrix-stats-client</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.mockito</groupId>
@@ -886,17 +886,17 @@
                     <version>${elasticsearch.version}</version>
                 </dependency>
 
-                <dependency>
-                    <groupId>org.elasticsearch.plugin</groupId>
-                    <artifactId>parent-join-client</artifactId>
-                    <version>${elasticsearch.version}</version>
-                </dependency>
+<!--                <dependency>-->
+<!--                    <groupId>org.elasticsearch.plugin</groupId>-->
+<!--                    <artifactId>parent-join-client</artifactId>-->
+<!--                    <version>${elasticsearch.version}</version>-->
+<!--                </dependency>-->
 
-                <dependency>
-                    <groupId>org.elasticsearch.plugin</groupId>
-                    <artifactId>aggs-matrix-stats-client</artifactId>
-                    <version>${elasticsearch.version}</version>
-                </dependency>
+<!--                <dependency>-->
+<!--                    <groupId>org.elasticsearch.plugin</groupId>-->
+<!--                    <artifactId>aggs-matrix-stats-client</artifactId>-->
+<!--                    <version>${elasticsearch.version}</version>-->
+<!--                </dependency>-->
             </dependencies>
         </profile>
         <profile>

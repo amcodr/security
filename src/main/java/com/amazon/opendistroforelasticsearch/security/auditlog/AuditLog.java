@@ -33,6 +33,7 @@ package com.amazon.opendistroforelasticsearch.security.auditlog;
 import java.io.Closeable;
 import java.util.Map;
 
+import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceConfig;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.engine.Engine.Delete;
@@ -44,8 +45,6 @@ import org.elasticsearch.index.shard.ShardId;
 import org.elasticsearch.rest.RestRequest;
 import org.elasticsearch.tasks.Task;
 import org.elasticsearch.transport.TransportRequest;
-
-import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceConfig;
 
 public interface AuditLog extends Closeable {
 

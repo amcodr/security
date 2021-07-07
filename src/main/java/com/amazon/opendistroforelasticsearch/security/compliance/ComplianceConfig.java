@@ -41,6 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
+import com.amazon.opendistroforelasticsearch.security.resolver.IndexResolverReplacer;
+import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
+import com.amazon.opendistroforelasticsearch.security.support.WildcardMatcher;
+import com.amazon.opendistroforelasticsearch.security.support.Setting6;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
@@ -51,11 +56,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
-import com.amazon.opendistroforelasticsearch.security.resolver.IndexResolverReplacer;
-import com.amazon.opendistroforelasticsearch.security.resolver.IndexResolverReplacer.Resolved;
-import com.amazon.opendistroforelasticsearch.security.support.ConfigConstants;
-import com.amazon.opendistroforelasticsearch.security.support.WildcardMatcher;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -90,16 +90,22 @@ public class ComplianceConfig {
         this.environment = environment;
         this.irr = irr;
         this.auditLog = auditLog;
-        final List<String> watchedReadFields = this.settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_READ_WATCHED_FIELDS,
+
+        final List<String> watchedReadFields = Setting6.getAsList(this.settings, ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_READ_WATCHED_FIELDS,
                 Collections.emptyList(), false);
 
-        watchedWriteIndices = settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_WRITE_WATCHED_INDICES, Collections.emptyList());
+
+        watchedWriteIndices = Setting6.getAsList(settings,ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_WRITE_WATCHED_INDICES, Collections.emptyList());
+
         logDiffsForWrite = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_WRITE_LOG_DIFFS, false);
         logWriteMetadataOnly = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_WRITE_METADATA_ONLY, false);
         logReadMetadataOnly = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_READ_METADATA_ONLY, false);
         logExternalConfig = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_EXTERNAL_CONFIG_ENABLED, false);
         logInternalConfig = settings.getAsBoolean(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_HISTORY_INTERNAL_CONFIG_ENABLED, false);
-        immutableIndicesPatterns = new HashSet<String>(settings.getAsList(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_IMMUTABLE_INDICES, Collections.emptyList()));
+
+        immutableIndicesPatterns = new HashSet<String>(Setting6.getAsList(settings,ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_IMMUTABLE_INDICES, Collections.emptyList()));
+
+
         final String saltAsString = settings.get(ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_SALT, ConfigConstants.OPENDISTRO_SECURITY_COMPLIANCE_SALT_DEFAULT);
         final byte[] saltAsBytes = saltAsString.getBytes(StandardCharsets.UTF_8);
 
@@ -309,7 +315,7 @@ public class ComplianceConfig {
             return false;
         }
         
-        final Resolved resolved = irr.resolveRequest(request);
+        final IndexResolverReplacer.Resolved resolved = irr.resolveRequest(request);
         final Set<String> allIndices = resolved.getAllIndices();
         
         //assert allIndices.size() == 1:"only one index here, not "+allIndices;

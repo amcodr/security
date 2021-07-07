@@ -35,10 +35,9 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.rest.RestRequest;
-
-import com.amazon.opendistroforelasticsearch.security.user.AuthCredentials;
 
 public class HTTPHelper {
 

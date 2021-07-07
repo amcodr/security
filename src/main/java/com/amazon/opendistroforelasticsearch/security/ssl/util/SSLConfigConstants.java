@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.amazon.opendistroforelasticsearch.security.support.Setting6;
 import org.elasticsearch.common.settings.Settings;
 
 public final class SSLConfigConstants {
@@ -102,9 +103,13 @@ public final class SSLConfigConstants {
         
         if(settings != null) {
             if(http) {
-                configuredProtocols = settings.getAsList(OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_PROTOCOLS, Collections.emptyList());
+//                configuredProtocols = settings.getAsList(OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_PROTOCOLS, Collections.emptyList());
+
+                configuredProtocols = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_PROTOCOLS, Collections.emptyList());
             } else {
-                configuredProtocols = settings.getAsList(OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_PROTOCOLS, Collections.emptyList());
+//                configuredProtocols = settings.getAsList(OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_PROTOCOLS, Collections.emptyList());
+
+                configuredProtocols = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_PROTOCOLS, Collections.emptyList());
             }
         }
         
@@ -238,9 +243,10 @@ public final class SSLConfigConstants {
         
         if(settings != null) {
             if(http) {
-                configuredCiphers = settings.getAsList(OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_CIPHERS, Collections.emptyList());
+
+                configuredCiphers = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_HTTP_ENABLED_CIPHERS, Collections.emptyList());
             } else {
-                configuredCiphers = settings.getAsList(OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_CIPHERS, Collections.emptyList());
+                configuredCiphers = Setting6.getAsList(settings,OPENDISTRO_SECURITY_SSL_TRANSPORT_ENABLED_CIPHERS, Collections.emptyList());
             }
         }
         

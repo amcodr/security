@@ -31,10 +31,8 @@
 package com.amazon.opendistroforelasticsearch.security.support;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,28 +42,8 @@ import java.util.jar.Manifest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
-import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.index.IndexService;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.rest.RestHandler;
-import org.elasticsearch.threadpool.ThreadPool;
 
-import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
-import com.amazon.opendistroforelasticsearch.security.auditlog.NullAuditLog;
-import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceConfig;
-import com.amazon.opendistroforelasticsearch.security.compliance.ComplianceIndexingOperationListener;
-import com.amazon.opendistroforelasticsearch.security.configuration.AdminDNs;
-import com.amazon.opendistroforelasticsearch.security.configuration.DlsFlsRequestValve;
-import com.amazon.opendistroforelasticsearch.security.configuration.IndexBaseConfigurationRepository;
-import com.amazon.opendistroforelasticsearch.security.privileges.PrivilegesEvaluator;
-import com.amazon.opendistroforelasticsearch.security.privileges.PrivilegesInterceptor;
-import com.amazon.opendistroforelasticsearch.security.ssl.transport.DefaultPrincipalExtractor;
-import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
-import com.amazon.opendistroforelasticsearch.security.transport.DefaultInterClusterRequestEvaluator;
-import com.amazon.opendistroforelasticsearch.security.transport.InterClusterRequestEvaluator;
 
 public class ReflectionHelper {
 
@@ -103,149 +81,149 @@ public class ReflectionHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static Collection<RestHandler> instantiateMngtRestApiHandler(final Settings settings, final Path configPath, final RestController restController,
-            final Client localClient, final AdminDNs adminDns, final IndexBaseConfigurationRepository cr, final ClusterService cs, final PrincipalExtractor principalExtractor,
-            final PrivilegesEvaluator evaluator, final ThreadPool threadPool, final AuditLog auditlog) {
+//    @SuppressWarnings("unchecked")
+//    public static Collection<RestHandler> instantiateMngtRestApiHandler(final Settings settings, final Path configPath, final RestController restController,
+//            final Client localClient, final AdminDNs adminDns, final IndexBaseConfigurationRepository cr, final ClusterService cs, final PrincipalExtractor principalExtractor,
+//            final PrivilegesEvaluator evaluator, final ThreadPool threadPool, final AuditLog auditlog) {
+//
+//        if (advancedModulesDisabled()) {
+//            return Collections.emptyList();
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.dlic.rest.api.OpenDistroSecurityRestApiActions");
+//            final Collection<RestHandler> ret = (Collection<RestHandler>) clazz
+//                    .getDeclaredMethod("getHandler", Settings.class, Path.class, RestController.class, Client.class, AdminDNs.class, IndexBaseConfigurationRepository.class,
+//                            ClusterService.class, PrincipalExtractor.class, PrivilegesEvaluator.class, ThreadPool.class, AuditLog.class)
+//                    .invoke(null, settings, configPath, restController, localClient, adminDns, cr, cs, principalExtractor, evaluator, threadPool, auditlog);
+//            addLoadedModule(clazz);
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable Rest Management Api Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return Collections.emptyList();
+//        }
+//    }
 
-        if (advancedModulesDisabled()) {
-            return Collections.emptyList();
-        }
+//    @SuppressWarnings("rawtypes")
+//    public static Constructor instantiateDlsFlsConstructor() {
+//
+//        if (advancedModulesDisabled()) {
+//            return null;
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.OpenDistroSecurityFlsDlsIndexSearcherWrapper");
+//            final Constructor<?> ret = clazz.getConstructor(IndexService.class,
+//                    Settings.class, AdminDNs.class, ClusterService.class, AuditLog.class,
+//                    ComplianceIndexingOperationListener.class, ComplianceConfig.class, PrivilegesEvaluator.class);
+//            addLoadedModule(clazz);
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable DLS/FLS Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return null;
+//        }
+//    }
 
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.dlic.rest.api.OpenDistroSecurityRestApiActions");
-            final Collection<RestHandler> ret = (Collection<RestHandler>) clazz
-                    .getDeclaredMethod("getHandler", Settings.class, Path.class, RestController.class, Client.class, AdminDNs.class, IndexBaseConfigurationRepository.class,
-                            ClusterService.class, PrincipalExtractor.class, PrivilegesEvaluator.class, ThreadPool.class, AuditLog.class)
-                    .invoke(null, settings, configPath, restController, localClient, adminDns, cr, cs, principalExtractor, evaluator, threadPool, auditlog);
-            addLoadedModule(clazz);
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable Rest Management Api Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return Collections.emptyList();
-        }
-    }
+//    public static DlsFlsRequestValve instantiateDlsFlsValve() {
+//
+//        if (advancedModulesDisabled()) {
+//            return new DlsFlsRequestValve.NoopDlsFlsRequestValve();
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.DlsFlsValveImpl");
+//            final DlsFlsRequestValve ret = (DlsFlsRequestValve) clazz.newInstance();
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable DLS/FLS Valve Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new DlsFlsRequestValve.NoopDlsFlsRequestValve();
+//        }
+//    }
 
-    @SuppressWarnings("rawtypes")
-    public static Constructor instantiateDlsFlsConstructor() {
+//    public static AuditLog instantiateAuditLog(final Settings settings, final Path configPath, final Client localClient, final ThreadPool threadPool,
+//            final IndexNameExpressionResolver resolver, final ClusterService clusterService) {
+//
+//        if (advancedModulesDisabled()) {
+//            return new NullAuditLog();
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
+//            final AuditLog impl = (AuditLog) clazz
+//                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
+//                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
+//            addLoadedModule(clazz);
+//            return impl;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new NullAuditLog();
+//        }
+//    }
 
-        if (advancedModulesDisabled()) {
-            return null;
-        }
+//    public static ComplianceIndexingOperationListener instantiateComplianceListener(ComplianceConfig complianceConfig, AuditLog auditlog) {
+//
+//        if (advancedModulesDisabled()) {
+//            return new ComplianceIndexingOperationListener();
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.compliance.ComplianceIndexingOperationListenerImpl");
+//            final ComplianceIndexingOperationListener impl = (ComplianceIndexingOperationListener) clazz
+//                    .getConstructor(ComplianceConfig.class, AuditLog.class)
+//                    .newInstance(complianceConfig, auditlog);
+//            addLoadedModule(clazz);
+//            return impl;
+//        } catch (final ClassNotFoundException e) {
+//            //TODO produce a single warn msg, this here is issued for every index
+//           log.debug("Unable to enable Compliance Module due to {}", e.toString());
+//           if(log.isDebugEnabled()) {
+//               log.debug("Stacktrace: ",e);
+//           }
+//           return new ComplianceIndexingOperationListener();
+//        } catch (final Throwable e) {
+//            log.error("Unable to enable Compliance Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new ComplianceIndexingOperationListener();
+//        }
+//    }
 
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.OpenDistroSecurityFlsDlsIndexSearcherWrapper");
-            final Constructor<?> ret = clazz.getConstructor(IndexService.class,
-                    Settings.class, AdminDNs.class, ClusterService.class, AuditLog.class,
-                    ComplianceIndexingOperationListener.class, ComplianceConfig.class, PrivilegesEvaluator.class);
-            addLoadedModule(clazz);
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable DLS/FLS Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return null;
-        }
-    }
-
-    public static DlsFlsRequestValve instantiateDlsFlsValve() {
-
-        if (advancedModulesDisabled()) {
-            return new DlsFlsRequestValve.NoopDlsFlsRequestValve();
-        }
-
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.DlsFlsValveImpl");
-            final DlsFlsRequestValve ret = (DlsFlsRequestValve) clazz.newInstance();
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable DLS/FLS Valve Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new DlsFlsRequestValve.NoopDlsFlsRequestValve();
-        }
-    }
-
-    public static AuditLog instantiateAuditLog(final Settings settings, final Path configPath, final Client localClient, final ThreadPool threadPool,
-            final IndexNameExpressionResolver resolver, final ClusterService clusterService) {
-
-        if (advancedModulesDisabled()) {
-            return new NullAuditLog();
-        }
-
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
-            final AuditLog impl = (AuditLog) clazz
-                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
-                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
-            addLoadedModule(clazz);
-            return impl;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new NullAuditLog();
-        }
-    }
-
-    public static ComplianceIndexingOperationListener instantiateComplianceListener(ComplianceConfig complianceConfig, AuditLog auditlog) {
-
-        if (advancedModulesDisabled()) {
-            return new ComplianceIndexingOperationListener();
-        }
-
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.compliance.ComplianceIndexingOperationListenerImpl");
-            final ComplianceIndexingOperationListener impl = (ComplianceIndexingOperationListener) clazz
-                    .getConstructor(ComplianceConfig.class, AuditLog.class)
-                    .newInstance(complianceConfig, auditlog);
-            addLoadedModule(clazz);
-            return impl;
-        } catch (final ClassNotFoundException e) {
-            //TODO produce a single warn msg, this here is issued for every index
-           log.debug("Unable to enable Compliance Module due to {}", e.toString());
-           if(log.isDebugEnabled()) {
-               log.debug("Stacktrace: ",e);
-           }
-           return new ComplianceIndexingOperationListener();
-        } catch (final Throwable e) {
-            log.error("Unable to enable Compliance Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new ComplianceIndexingOperationListener();
-        }
-    }
-
-    public static PrivilegesInterceptor instantiatePrivilegesInterceptorImpl(final IndexNameExpressionResolver resolver, final ClusterService clusterService,
-            final Client localClient, final ThreadPool threadPool) {
-
-        final PrivilegesInterceptor noop = new PrivilegesInterceptor(resolver, clusterService, localClient, threadPool);
-
-        if (advancedModulesDisabled()) {
-            return noop;
-        }
-
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.PrivilegesInterceptorImpl");
-            final PrivilegesInterceptor ret = (PrivilegesInterceptor) clazz.getConstructor(IndexNameExpressionResolver.class, ClusterService.class, Client.class, ThreadPool.class)
-                    .newInstance(resolver, clusterService, localClient, threadPool);
-            addLoadedModule(clazz);
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable Kibana Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return noop;
-        }
-    }
+//    public static PrivilegesInterceptor instantiatePrivilegesInterceptorImpl(final IndexNameExpressionResolver resolver, final ClusterService clusterService,
+//            final Client localClient, final ThreadPool threadPool) {
+//
+//        final PrivilegesInterceptor noop = new PrivilegesInterceptor(resolver, clusterService, localClient, threadPool);
+//
+//        if (advancedModulesDisabled()) {
+//            return noop;
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.configuration.PrivilegesInterceptorImpl");
+//            final PrivilegesInterceptor ret = (PrivilegesInterceptor) clazz.getConstructor(IndexNameExpressionResolver.class, ClusterService.class, Client.class, ThreadPool.class)
+//                    .newInstance(resolver, clusterService, localClient, threadPool);
+//            addLoadedModule(clazz);
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable Kibana Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return noop;
+//        }
+//    }
 
     @SuppressWarnings("unchecked")
     public static <T> T instantiateAAA(final String clazz, final Settings settings, final Path configPath, final boolean checkEnterprise) {
@@ -271,64 +249,64 @@ public class ReflectionHelper {
         }
     }
 
-    public static InterClusterRequestEvaluator instantiateInterClusterRequestEvaluator(final String clazz, final Settings settings) {
+//    public static InterClusterRequestEvaluator instantiateInterClusterRequestEvaluator(final String clazz, final Settings settings) {
+//
+//        try {
+//            final Class<?> clazz0 = Class.forName(clazz);
+//            final InterClusterRequestEvaluator ret = (InterClusterRequestEvaluator) clazz0.getConstructor(Settings.class).newInstance(settings);
+//            addLoadedModule(clazz0);
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to load inter cluster request evaluator '{}' due to {}", clazz, e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new DefaultInterClusterRequestEvaluator(settings);
+//        }
+//    }
 
-        try {
-            final Class<?> clazz0 = Class.forName(clazz);
-            final InterClusterRequestEvaluator ret = (InterClusterRequestEvaluator) clazz0.getConstructor(Settings.class).newInstance(settings);
-            addLoadedModule(clazz0);
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to load inter cluster request evaluator '{}' due to {}", clazz, e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new DefaultInterClusterRequestEvaluator(settings);
-        }
-    }
-
-    public static PrincipalExtractor instantiatePrincipalExtractor(final String clazz) {
-
-        try {
-            final Class<?> clazz0 = Class.forName(clazz);
-            final PrincipalExtractor ret = (PrincipalExtractor) clazz0.newInstance();
-            addLoadedModule(clazz0);
-            return ret;
-        } catch (final Throwable e) {
-            log.warn("Unable to load pricipal extractor '{}' due to {}", clazz, e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new DefaultPrincipalExtractor();
-        }
-    }
+//    public static PrincipalExtractor instantiatePrincipalExtractor(final String clazz) {
+//
+//        try {
+//            final Class<?> clazz0 = Class.forName(clazz);
+//            final PrincipalExtractor ret = (PrincipalExtractor) clazz0.newInstance();
+//            addLoadedModule(clazz0);
+//            return ret;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to load pricipal extractor '{}' due to {}", clazz, e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new DefaultPrincipalExtractor();
+//        }
+//    }
 
     public static boolean isAdvancedModuleAAAModule(final String clazz) {
         boolean advancedModuleInstalled = false;
 
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.ldap.backend.LDAPAuthorizationBackend")) {
-            advancedModuleInstalled = true;
-        }
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.ldap.backend.LDAPAuthorizationBackend")) {
+//            advancedModuleInstalled = true;
+//        }
 
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.ldap.backend.LDAPAuthenticationBackend")) {
-            advancedModuleInstalled = true;
-        }
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.ldap.backend.LDAPAuthenticationBackend")) {
+//            advancedModuleInstalled = true;
+//        }
 
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.jwt.HTTPJwtAuthenticator")) {
-            advancedModuleInstalled = true;
-        }
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.jwt.HTTPJwtAuthenticator")) {
+//            advancedModuleInstalled = true;
+//        }
         
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.jwt.keybyoidc.HTTPJwtKeyByOpenIdConnectAuthenticator")) {
-            advancedModuleInstalled = true;
-        }
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.jwt.keybyoidc.HTTPJwtKeyByOpenIdConnectAuthenticator")) {
+//            advancedModuleInstalled = true;
+//        }
 
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.kerberos.HTTPSpnegoAuthenticator")) {
-            advancedModuleInstalled = true;
-        }
-        
-        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.saml.HTTPSamlAuthenticator")) {
-            advancedModuleInstalled = true;
-        }
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.kerberos.HTTPSpnegoAuthenticator")) {
+//            advancedModuleInstalled = true;
+//        }
+//
+//        if (clazz.equalsIgnoreCase("com.amazon.dlic.auth.http.saml.HTTPSamlAuthenticator")) {
+//            advancedModuleInstalled = true;
+//        }
 
         return advancedModuleInstalled;
     }

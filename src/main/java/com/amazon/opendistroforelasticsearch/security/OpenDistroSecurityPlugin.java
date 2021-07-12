@@ -48,6 +48,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+import com.amazon.opendistroforelasticsearch.security.action.configupdate.ConfigUpdateAction;
+import com.amazon.opendistroforelasticsearch.security.action.configupdate.TransportConfigUpdateAction;
 import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLogSslExceptionHandler;
 import com.amazon.opendistroforelasticsearch.security.auth.BackendRegistry;
 import com.amazon.opendistroforelasticsearch.security.auth.internal.InternalAuthenticationBackend;
@@ -58,8 +60,11 @@ import com.amazon.opendistroforelasticsearch.security.resolver.IndexResolverRepl
 import com.amazon.opendistroforelasticsearch.security.ssl.OpenDistroSecuritySSLPlugin;
 import com.amazon.opendistroforelasticsearch.security.ssl.SslExceptionHandler;
 import com.amazon.opendistroforelasticsearch.security.ssl.transport.OpenDistroSecuritySSLNettyTransport;
+import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
 import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLConfigConstants;
 import org.elasticsearch.Version;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.network.NetworkService;
 import org.elasticsearch.common.util.BigArrays;
@@ -414,12 +419,12 @@ public final class OpenDistroSecurityPlugin extends OpenDistroSecuritySSLPlugin 
 
                 if (sslCertReloadEnabled) {
                 }
-//                As if the advanced module is disabled then ReflectionHelper.instantiateMngtRestApiHandler returns the empty list
 
-//                Collection<RestHandler> apiHandler = ReflectionHelper
-//                        .instantiateMngtRestApiHandler(settings, configPath, restController, localClient, adminDns, cr, cs, Objects.requireNonNull(principalExtractor),  evaluator, threadPool, Objects.requireNonNull(auditLog));
-//                handlers.addAll(apiHandler);
-//                log.debug("Added {} management rest handler(s)", apiHandler.size());
+//                passing evaluator as null and principal extractor as null as there is no need for evaluation of privileges.
+                Collection<RestHandler> apiHandler = ReflectionHelper
+                        .instantiateMngtRestApiHandler(settings, configPath, restController, localClient, adminDns, cr, cs,Objects.requireNonNull(principalExtractor) , threadPool, Objects.requireNonNull(auditLog));
+                handlers.addAll(apiHandler);
+                log.debug("Added {} management rest handler(s)", apiHandler.size());
             }
         }
 
@@ -437,6 +442,14 @@ public final class OpenDistroSecurityPlugin extends OpenDistroSecuritySSLPlugin 
     }
 
 
+    @Override
+    public List<ActionHandler<? extends ActionRequest, ? extends ActionResponse>> getActions() {
+        List<ActionHandler<? extends ActionRequest, ? extends ActionResponse>> actions = new ArrayList<>(1);
+        if(!tribeNodeClient && !disabled && !sslOnly) {
+            actions.add(new ActionHandler<>(ConfigUpdateAction.INSTANCE, TransportConfigUpdateAction.class));
+        }
+        return actions;
+    }
 
 
 
@@ -499,10 +512,13 @@ public final class OpenDistroSecurityPlugin extends OpenDistroSecuritySSLPlugin 
         backendRegistry = new BackendRegistry(settings, configPath, adminDns, xffResolver, iab, auditLog, threadPool);
         cr.subscribeOnChange(ConfigConstants.CONFIGNAME_CONFIG, backendRegistry);
 
+        principalExtractor = new com.amazon.opendistroforelasticsearch.security.ssl.transport.DefaultPrincipalExtractor();
+        auditLog = ReflectionHelper.instantiateAuditLog(settings, configPath, localClient, threadPool, resolver, clusterService);
         components.add(adminDns);
 
 //        Adding auditLog to the components causing the guice creation errors during booting process in injest of elasticsearch
 //        components.add(auditLog);
+        components.add(principalExtractor);
         components.add(cr);
         components.add(iab);
         components.add(xffResolver);

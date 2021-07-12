@@ -390,12 +390,12 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
             throw new ElasticsearchException(e);
         }
 
-        if (logComplianceEvent && complianceConfig.isEnabled()) {
-            String configurationType = configTypes.iterator().next();
-            Map<String, String> fields = new HashMap<String, String>();
-            fields.put(configurationType, Strings.toString(retVal.get(configurationType).v2()));
-            auditLog.logDocumentRead(this.opendistrosecurityIndex, configurationType, null, fields, complianceConfig);
-        }
+//        if (logComplianceEvent && complianceConfig.isEnabled()) {
+//            String configurationType = configTypes.iterator().next();
+//            Map<String, String> fields = new HashMap<String, String>();
+//            fields.put(configurationType, Strings.toString(retVal.get(configurationType).v2()));
+//            auditLog.logDocumentRead(this.opendistrosecurityIndex, configurationType, null, fields, complianceConfig);
+//        }
 
         return retVal;
     }

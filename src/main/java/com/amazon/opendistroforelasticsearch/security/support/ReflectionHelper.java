@@ -33,16 +33,28 @@ package com.amazon.opendistroforelasticsearch.security.support;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import com.amazon.opendistroforelasticsearch.security.auditlog.AuditLog;
+import com.amazon.opendistroforelasticsearch.security.auditlog.NullAuditLog;
+import com.amazon.opendistroforelasticsearch.security.configuration.AdminDNs;
+import com.amazon.opendistroforelasticsearch.security.configuration.IndexBaseConfigurationRepository;
+import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
+import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.rest.RestController;
+import org.elasticsearch.rest.RestHandler;
+import org.elasticsearch.threadpool.ThreadPool;
 
 
 public class ReflectionHelper {
@@ -81,31 +93,31 @@ public class ReflectionHelper {
         }
     }
 
-//    @SuppressWarnings("unchecked")
-//    public static Collection<RestHandler> instantiateMngtRestApiHandler(final Settings settings, final Path configPath, final RestController restController,
-//            final Client localClient, final AdminDNs adminDns, final IndexBaseConfigurationRepository cr, final ClusterService cs, final PrincipalExtractor principalExtractor,
-//            final PrivilegesEvaluator evaluator, final ThreadPool threadPool, final AuditLog auditlog) {
-//
+    @SuppressWarnings("unchecked")
+    public static Collection<RestHandler> instantiateMngtRestApiHandler(final Settings settings, final Path configPath, final RestController restController,
+                                                                        final Client localClient, final AdminDNs adminDns, final IndexBaseConfigurationRepository cr, final ClusterService cs,final PrincipalExtractor principalExtractor
+                                                                        , final ThreadPool threadPool, final AuditLog auditlog) {
+
 //        if (advancedModulesDisabled()) {
 //            return Collections.emptyList();
 //        }
-//
-//        try {
-//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.dlic.rest.api.OpenDistroSecurityRestApiActions");
-//            final Collection<RestHandler> ret = (Collection<RestHandler>) clazz
-//                    .getDeclaredMethod("getHandler", Settings.class, Path.class, RestController.class, Client.class, AdminDNs.class, IndexBaseConfigurationRepository.class,
-//                            ClusterService.class, PrincipalExtractor.class, PrivilegesEvaluator.class, ThreadPool.class, AuditLog.class)
-//                    .invoke(null, settings, configPath, restController, localClient, adminDns, cr, cs, principalExtractor, evaluator, threadPool, auditlog);
-//            addLoadedModule(clazz);
-//            return ret;
-//        } catch (final Throwable e) {
-//            log.warn("Unable to enable Rest Management Api Module due to {}", e.toString());
-//            if(log.isDebugEnabled()) {
-//                log.debug("Stacktrace: ",e);
-//            }
-//            return Collections.emptyList();
-//        }
-//    }
+
+        try {
+            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.dlic.rest.api.OpenDistroSecurityRestApiActions");
+            final Collection<RestHandler> ret = (Collection<RestHandler>) clazz
+                    .getDeclaredMethod("getHandler", Settings.class, Path.class, RestController.class, Client.class, AdminDNs.class, IndexBaseConfigurationRepository.class,
+                            ClusterService.class,PrincipalExtractor.class,ThreadPool.class, AuditLog.class)
+                    .invoke(null, settings, configPath, restController, localClient, adminDns, cr, cs,principalExtractor,threadPool,auditlog);
+            addLoadedModule(clazz);
+            return ret;
+        } catch (final Throwable e) {
+            log.warn("Unable to enable Rest Management Api Module due to {}", e.toString());
+            if(log.isDebugEnabled()) {
+                log.debug("Stacktrace: ",e);
+            }
+            return Collections.emptyList();
+        }
+    }
 
 //    @SuppressWarnings("rawtypes")
 //    public static Constructor instantiateDlsFlsConstructor() {
@@ -149,28 +161,28 @@ public class ReflectionHelper {
 //        }
 //    }
 
-//    public static AuditLog instantiateAuditLog(final Settings settings, final Path configPath, final Client localClient, final ThreadPool threadPool,
-//            final IndexNameExpressionResolver resolver, final ClusterService clusterService) {
-//
-//        if (advancedModulesDisabled()) {
-//            return new NullAuditLog();
-//        }
-//
-//        try {
-//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
-//            final AuditLog impl = (AuditLog) clazz
-//                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
-//                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
-//            addLoadedModule(clazz);
-//            return impl;
-//        } catch (final Throwable e) {
-//            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
-//            if(log.isDebugEnabled()) {
-//                log.debug("Stacktrace: ",e);
-//            }
-//            return new NullAuditLog();
-//        }
-//    }
+    public static AuditLog instantiateAuditLog(final Settings settings, final Path configPath, final Client localClient, final ThreadPool threadPool,
+                                               final IndexNameExpressionResolver resolver, final ClusterService clusterService) {
+
+        if (advancedModulesDisabled()) {
+            return new NullAuditLog();
+        }
+
+        try {
+            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
+            final AuditLog impl = (AuditLog) clazz
+                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
+                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
+            addLoadedModule(clazz);
+            return impl;
+        } catch (final Throwable e) {
+            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
+            if(log.isDebugEnabled()) {
+                log.debug("Stacktrace: ",e);
+            }
+            return new NullAuditLog();
+        }
+    }
 
 //    public static ComplianceIndexingOperationListener instantiateComplianceListener(ComplianceConfig complianceConfig, AuditLog auditlog) {
 //

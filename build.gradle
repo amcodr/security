@@ -43,6 +43,8 @@ dependencies {
 
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.61'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    compile 'com.flipkart.zjsonpatch:zjsonpatch:0.4.4'
 }
 
 // removing the Werror tag

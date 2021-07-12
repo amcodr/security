@@ -30,6 +30,7 @@
 
 package com.amazon.opendistroforelasticsearch.security.ssl;
 
+import com.amazon.opendistroforelasticsearch.security.ssl.transport.PrincipalExtractor;
 import com.amazon.opendistroforelasticsearch.security.ssl.util.SSLConfigConstants;
 import io.netty.handler.ssl.OpenSsl;
 import io.netty.util.internal.PlatformDependent;
@@ -80,6 +81,7 @@ public class OpenDistroSecuritySSLPlugin extends Plugin implements ActionPlugin,
     protected final Settings settings;
     protected final OpenDistroSecurityKeyStore odsks;
     protected final Path configPath;
+    protected PrincipalExtractor principalExtractor;
 
     public OpenDistroSecuritySSLPlugin(final Settings settings, final Path configPath) {
         this(settings, configPath, false);

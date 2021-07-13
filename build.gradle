@@ -45,6 +45,9 @@ dependencies {
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
     compile 'com.flipkart.zjsonpatch:zjsonpatch:0.4.4'
+
+    compile 'com.google.errorprone:error_prone_annotations:2.7.1'
+
 }
 
 // removing the Werror tag
@@ -54,7 +57,17 @@ allprojects {
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
-            options.compilerArgs.remove("-Werror")
+//            uncomment below line to remove Werror tag
+//            options.compilerArgs.remove("-Werror")
+        }
+    }
+}
+
+
+if (JavaVersion.current().isJava8Compatible()) {
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.addStringOption('Xdoclint:none', '-quiet')
         }
     }
 }

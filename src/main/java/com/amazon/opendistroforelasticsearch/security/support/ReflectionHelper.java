@@ -164,24 +164,28 @@ public class ReflectionHelper {
     public static AuditLog instantiateAuditLog(final Settings settings, final Path configPath, final Client localClient, final ThreadPool threadPool,
                                                final IndexNameExpressionResolver resolver, final ClusterService clusterService) {
 
-        if (advancedModulesDisabled()) {
-            return new NullAuditLog();
-        }
+        return new NullAuditLog();
 
-        try {
-            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
-            final AuditLog impl = (AuditLog) clazz
-                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
-                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
-            addLoadedModule(clazz);
-            return impl;
-        } catch (final Throwable e) {
-            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
-            if(log.isDebugEnabled()) {
-                log.debug("Stacktrace: ",e);
-            }
-            return new NullAuditLog();
-        }
+//        not implementing the audit logging
+
+//        if (advancedModulesDisabled()) {
+//            return new NullAuditLog();
+//        }
+//
+//        try {
+//            final Class<?> clazz = Class.forName("com.amazon.opendistroforelasticsearch.security.auditlog.impl.AuditLogImpl");
+//            final AuditLog impl = (AuditLog) clazz
+//                    .getConstructor(Settings.class, Path.class, Client.class, ThreadPool.class, IndexNameExpressionResolver.class, ClusterService.class)
+//                    .newInstance(settings, configPath, localClient, threadPool, resolver, clusterService);
+//            addLoadedModule(clazz);
+//            return impl;
+//        } catch (final Throwable e) {
+//            log.warn("Unable to enable Auditlog Module due to {}", e.toString());
+//            if(log.isDebugEnabled()) {
+//                log.debug("Stacktrace: ",e);
+//            }
+//            return new NullAuditLog();
+//        }
     }
 
 //    public static ComplianceIndexingOperationListener instantiateComplianceListener(ComplianceConfig complianceConfig, AuditLog auditlog) {

@@ -372,7 +372,7 @@ public abstract class AbstractApiAction extends BaseRestHandler {
 
 	}
 
-	@Override
+	@Override @SuppressWarnings("try")
 	protected final RestChannelConsumer prepareRequest(RestRequest request, NodeClient client) throws IOException {
 
 		// consume all parameters first so we can return a correct HTTP status,
@@ -533,7 +533,7 @@ public abstract class AbstractApiAction extends BaseRestHandler {
 	 * parameter(s) have not been consumed, and ES will always return a 400 with
 	 * an internal error message.
 	 *
-	 * @param request
+	 * @param request rest request
 	 */
 	protected void consumeParameters(final RestRequest request) {
 		request.param("name");

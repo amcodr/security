@@ -89,6 +89,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
     private final ComplianceConfig complianceConfig;
     private ThreadPool threadPool;
 
+    @SuppressWarnings("try")
     private IndexBaseConfigurationRepository(Settings settings, final Path configPath, ThreadPool threadPool,
                                              Client client, ClusterService clusterService, AuditLog auditLog, ComplianceConfig complianceConfig) {
         this.opendistrosecurityIndex = settings.get(ConfigConstants.OPENDISTRO_SECURITY_CONFIG_INDEX_NAME, ConfigConstants.OPENDISTRO_SECURITY_DEFAULT_CONFIG_INDEX);
@@ -363,6 +364,7 @@ public class IndexBaseConfigurationRepository implements ConfigurationRepository
     }
 
 
+    @SuppressWarnings("try")
     public Map<String, Tuple<Long, Settings>> loadConfigurations(Collection<String> configTypes, boolean logComplianceEvent) {
 
         final ThreadContext threadContext = threadPool.getThreadContext();

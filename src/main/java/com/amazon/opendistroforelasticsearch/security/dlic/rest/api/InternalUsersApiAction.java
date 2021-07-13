@@ -88,7 +88,7 @@ public class InternalUsersApiAction extends PatchableResourceApiAction {
         return Endpoint.INTERNALUSERS;
     }
 
-    @Override
+    @Override @SuppressWarnings("cast")
     protected void handlePut(RestChannel channel, final RestRequest request, final Client client,
                              final Settings.Builder additionalSettingsBuilder) {
 

@@ -54,7 +54,7 @@ public class HTTPProxyAuthenticator implements HTTPAuthenticator {
         this.settings = settings;
     }
 
-    @Override
+    @Override @SuppressWarnings("cast")
     public AuthCredentials extractCredentials(final RestRequest request, ThreadContext context) {
     	
         if(context.getTransient(ConfigConstants.OPENDISTRO_SECURITY_XFF_DONE) !=  Boolean.TRUE) {

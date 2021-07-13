@@ -99,7 +99,7 @@ public final class OpenDistroSecurityUtils {
         return null;
     }
 
-    @SafeVarargs
+    @SafeVarargs @SuppressWarnings("varargs")
     public static <T> Map<T, T>  mapFromArray(T ... keyValues) {
         if(keyValues == null) {
             return Collections.emptyMap();
